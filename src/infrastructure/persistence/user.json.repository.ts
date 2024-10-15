@@ -1,5 +1,3 @@
-// src/infrastructure/persistence/user.json.repository.ts
-
 import fs from "fs/promises";
 import path from "path";
 import { IUserRepository } from "../../application/repository/user.repository";
