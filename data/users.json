@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "email": "admin@example.com",
+    "password": "hashedPassword123",
+    "isAdmin": true
+  },
+  {
+    "id": "2",
+    "username": "johndoe",
+    "email": "john@example.com",
+    "password": "hashedPassword456",
+    "isAdmin": false
+  },
+  {
+    "id": "3",
+    "username": "janedoe",
+    "email": "jane@example.com",
+    "password": "hashedPassword789",
+    "isAdmin": false
+  },
+  {
+    "id": "4",
+    "username": "alicesmith",
+    "email": "alice@example.com",
+    "password": "hashedPasswordABC",
+    "isAdmin": false
+  },
+  {
+    "id": "5",
+    "username": "bobwilson",
+    "email": "bob@example.com",
+    "password": "hashedPasswordDEF",
+    "isAdmin": false
+  }
+]
