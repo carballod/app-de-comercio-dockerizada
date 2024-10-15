@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "name": "Smartphone X",
+    "description": "Latest model with advanced camera and long battery life",
+    "price": 699.99,
+    "category": "Electronics"
+  },
+  {
+    "id": "2",
+    "name": "Leather Wallet",
+    "description": "Genuine leather wallet with multiple card slots",
+    "price": 49.99,
+    "category": "Accessories"
+  },
+  {
+    "id": "3",
+    "name": "Running Shoes",
+    "description": "Lightweight and breathable shoes for athletes",
+    "price": 89.99,
+    "category": "Sports"
+  },
+  {
+    "id": "4",
+    "name": "Coffee Maker",
+    "description": "Programmable coffee maker with thermal carafe",
+    "price": 79.99,
+    "category": "Home & Kitchen"
+  },
+  {
+    "id": "5",
+    "name": "Wireless Headphones",
+    "description": "Noise-cancelling headphones with long battery life",
+    "price": 159.99,
+    "category": "Electronics"
+  },
+  {
+    "id": "6",
+    "name": "Yoga Mat",
+    "description": "Non-slip, eco-friendly yoga mat",
+    "price": 29.99,
+    "category": "Sports"
+  },
+  {
+    "id": "7",
+    "name": "Stainless Steel Water Bottle",
+    "description": "Insulated bottle that keeps drinks cold for 24 hours",
+    "price": 24.99,
+    "category": "Accessories"
+  },
+  {
+    "id": "8",
+    "name": "Smart Watch",
+    "description": "Fitness tracker with heart rate monitor and GPS",
+    "price": 199.99,
+    "category": "Electronics"
+  },
+  {
+    "id": "9",
+    "name": "Portable Charger",
+    "description": "10000mAh power bank for multiple device charges",
+    "price": 39.99,
+    "category": "Electronics"
+  },
+  {
+    "id": "10",
+    "name": "Backpack",
+    "description": "Water-resistant backpack with laptop compartment",
+    "price": 59.99,
+    "category": "Accessories"
+  },
+  {
+    "name": "test x edit",
+    "description": "Latest test edit",
+    "price": 1,
+    "category": "none",
+    "id": "1728952188481"
+  }
+]
