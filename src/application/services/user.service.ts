@@ -15,7 +15,9 @@ export class UserService {
   async getUserByEmail(email: string): Promise<User | null> {
     return this.userRepository.findByEmail(email);
   }
-
+  async getUserByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findByUsername(username);
+  }
   async createUser(userData: Omit<User, "id">): Promise<User> {
     return this.userRepository.save(userData);
   }

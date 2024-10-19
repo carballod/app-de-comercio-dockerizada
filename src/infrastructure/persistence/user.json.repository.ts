@@ -28,6 +28,10 @@ export class UserJsonRepository implements IUserRepository {
     const users = await this.readUsers();
     return users.find((user) => user.email === email) || null;
   }
+  async findByUsername(username: string): Promise<User | null> {
+    const users = await this.readUsers();
+    return users.find((user) => user.username === username) || null;
+  }
 
   async save(user: Omit<User, "id">): Promise<User> {
     const users = await this.readUsers();
