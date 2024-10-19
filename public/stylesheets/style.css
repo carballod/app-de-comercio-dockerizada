@@ -1,63 +1,179 @@
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #2ecc71;
-  --background-color: #ecf0f1;
-  --text-color: #34495e;
-  --header-color: #2c3e50;
+  --beige-mate: #D2C5B0;
+  --crema-calido: #F0E6D2;
+  --gris-claro: #F5F5F5;
+  --gris: #E0E0E0;
+  --marron-empolvado: #B0A18F;
+  --oliva: #556B2F;
+  --verde-empolvado: #8FBC8F;
+  --verde-palido: #98FB98;
+  --verde-oscuro: #2E8B57;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
+  font-family: Arial, sans-serif;
   line-height: 1.6;
+  color: #333;
+  background-color: var(--gris-claro);
   margin: 0;
   padding: 0;
 }
 
 .container {
-  width: 80%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
 header {
-  background-color: var(--header-color);
+  background-color: var(--verde-oscuro);
   color: white;
-  padding: 1rem 0;
+  padding: 1rem;
+  width: 100%;
 }
 
-.header-content {
+nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.site-title {
+nav ul {
+  list-style-type: none;
+  padding: 0;
   margin: 0;
-  font-size: 1.5rem;
-}
-
-.main-nav {
   display: flex;
 }
 
-.nav-item {
+nav ul li {
+  margin-right: 1rem;
+}
+
+nav ul li a {
   color: white;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  margin-left: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
 }
 
-.nav-item:hover {
-  background-color: var(--primary-color);
+h1, h2, h3, h4, h5, h6 {
+  color: var(--oliva);
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: var(--verde-empolvado);
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px var(--verde-oscuro);
+}
+
+.btn:hover {
+  background-color: var(--verde-oscuro);
+}
+
+.btn:active {
+  background-color: var(--verde-oscuro);
+  box-shadow: 0 1px var(--verde-oscuro);
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--verde-empolvado);
+}
+
+.btn-primary:hover {
+  background-color: var(--verde-oscuro);
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  box-shadow: 0 2px #c0392b;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.bg-success {
+  background-color: var(--verde-palido);
+}
+
+.bg-warning {
+  background-color: #f1c40f;
+}
+
+.bg-danger {
+  background-color: #e74c3c;
+}
+
+#cartButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--verde-empolvado);
+  color: white;
+  font-size: 24px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#cartItemCount {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.table {
+  background-color: white;
+}
+
+.table th {
+  background-color: var(--verde-empolvado);
   color: white;
 }
 
-h1, h2, h3 {
-  color: var(--primary-color);
+.modal-content {
+  background-color: var(--gris-claro);
+}
+
+.modal-header {
+  background-color: var(--verde-empolvado);
+  color: white;
 }
 
 a {
@@ -68,21 +184,6 @@ a {
 
 a:hover {
   color: var(--secondary-color);
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: var(--secondary-color);
 }
 
 table {

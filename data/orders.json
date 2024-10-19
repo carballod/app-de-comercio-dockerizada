@@ -80,71 +80,53 @@
     "status": "pending"
   },
   {
-    "productId": "2",
-    "quantity": 1,
-    "id": "1729353349857"
-  },
-  {
-    "productId": "2",
-    "quantity": 1,
-    "id": "1729354276328"
-  },
-  {
-    "items": [
+    "id": "1729356253512",
+    "userId": "1729353242531",
+    "products": [
       {
-        "id": "1",
-        "name": "Smartphone X",
-        "price": 699.99,
+        "productId": "3",
+        "quantity": 2
+      }
+    ],
+    "totalAmount": 179.98,
+    "status": "pending"
+  },
+  {
+    "id": "1729356860239",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "productId": "2",
+        "quantity": 6
+      },
+      {
+        "productId": "3",
+        "quantity": 3
+      }
+    ],
+    "totalAmount": 569.91,
+    "status": "cancelled",
+    "date": "2024-10-19T16:54:20.238Z"
+  },
+  {
+    "id": "1729359523595",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "productId": "2",
         "quantity": 1
       },
       {
-        "id": "3",
-        "name": "Running Shoes",
-        "price": 89.99,
+        "productId": "3",
+        "quantity": 1
+      },
+      {
+        "productId": "1",
         "quantity": 1
       }
     ],
-    "id": "1729354285415"
-  },
-  {
-    "items": [
-      {
-        "id": "1",
-        "name": "Smartphone X",
-        "price": 699.99,
-        "quantity": 1
-      },
-      {
-        "id": "2",
-        "name": "Leather Wallet",
-        "price": 49.99,
-        "quantity": 1
-      },
-      {
-        "id": "3",
-        "name": "Running Shoes",
-        "price": 89.99,
-        "quantity": 1
-      },
-      {
-        "id": "4",
-        "name": "Coffee Maker",
-        "price": 79.99,
-        "quantity": 1
-      },
-      {
-        "id": "5",
-        "name": "Wireless Headphones",
-        "price": 159.99,
-        "quantity": 1
-      },
-      {
-        "id": "6",
-        "name": "Yoga Mat",
-        "price": 29.99,
-        "quantity": 1
-      }
-    ],
-    "id": "1729354362336"
+    "totalAmount": 839.97,
+    "status": "pending",
+    "date": "2024-10-19T17:38:43.594Z"
   }
 ]

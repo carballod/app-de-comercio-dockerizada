@@ -35,9 +35,9 @@ block content
           button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cerrar
 
   if user && !user.isAdmin
-    button#openCartBtn.btn.btn-primary.position-fixed.top-0.end-0.m-3(type='button', data-bs-toggle='modal', data-bs-target='#cartModal')
-    i.bi.bi-cart-fill
-    span.badge.bg-danger.ms-1#cartItemCount 0
+    button#cartButton(type='button', data-bs-toggle='modal', data-bs-target='#cartModal')
+      | 🛒
+      span#cartItemCount 0
 
   script.
     document.querySelectorAll('.delete-product-btn').forEach(button => {

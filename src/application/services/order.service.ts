@@ -17,8 +17,19 @@ export class OrderService {
   }
 
   async createOrder(orderData: Omit<Order, "id">): Promise<Order> {
-    return this.orderRepository.save(orderData);
-  }
+    if (!orderData.userId || !orderData.products || !orderData.totalAmount) {
+      throw new Error('Datos de orden incompletos');
+    }
+    const id = Date.now().toString();
+
+  const newOrder: Order = {
+    id,
+    ...orderData,
+    status: orderData.status || 'pending' 
+  };
+
+  return this.orderRepository.save(newOrder);
+}
 
   async updateOrder(
     id: string,

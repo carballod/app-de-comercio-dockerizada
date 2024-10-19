@@ -1,46 +1,52 @@
 extends ../layout
 
 block content
-  h1 Mis Órdenes
-  table.table
-    thead
-      tr
-        th ID
-        th Producto
-        th Cantidad
-        th Fecha
-        th Estado
-        th Acciones
-    tbody
+  h1.mb-4 Mis Órdenes
+
+  if orders.length === 0
+    p No tienes órdenes aún.
+  else
+    .row
       each order in orders
-        tr
-          td= order.id
-          td= order.productId
-          td= order.quantity
-          td= order.date
-          td= order.status
-          td
-            if order.status !== 'cancelled' && order.status !== 'completed'
-              button.btn.btn-sm.btn-danger.cancel-order-btn(data-order-id=order.id) Cancelar
-            if user && user.isAdmin
-              a.btn.btn-sm.btn-warning.ml-2(href=`orders/${order.id}/edit`) Editar
+        .col-md-6.mb-4
+          .card
+            .card-body
+              h5.card-title Orden ##{order.id}
+              p.card-text
+                strong Estado: 
+                span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
+              p.card-text
+                strong Fecha: 
+                | #{new Date(order.date).toLocaleString()}
+              p.card-text
+                strong Total: 
+                | $#{order.totalAmount.toFixed(2)}
+              h6.mt-3 Productos:
+              ul.list-group.list-group-flush
+                each product in order.products
+                  li.list-group-item
+                    | #{product.name} - Cantidad: #{product.quantity}
+              
+              if order.status === 'pending'
+                button.btn.btn-sm.btn-danger.mt-3(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
 
   script.
-    document.querySelectorAll('.cancel-order-btn').forEach(button => {
-      button.addEventListener('click', async (e) => {
-        const orderId = e.target.getAttribute('data-order-id');
-        if (confirm('¿Estás seguro de que quieres cancelar esta orden?')) {
-          const response = await fetch(`api/order/${orderId}/cancel`, {
+    async function cancelOrder(orderId) {
+      if (confirm('¿Estás seguro de que quieres cancelar esta orden?')) {
+        try {
+          const response = await fetch(`/api/order/${orderId}/cancel`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
           });
           if (response.ok) {
-            const row = e.target.closest('tr');
-            row.querySelector('td:nth-child(5)').textContent = 'cancelled';
-            e.target.remove(); 
             alert('Orden cancelada exitosamente');
+            location.reload();
           } else {
             alert('Error al cancelar la orden');
           }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error al cancelar la orden');
         }
-      });
-    });
+      }
+    }

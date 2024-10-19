@@ -10,14 +10,14 @@
     "id": "3",
     "username": "janedoe",
     "email": "jane@example.com",
-    "password": "hashedPassword789",
+    "password": "$2b$10$7D.kuvkRgQH4A3updWE/UeDVZCwQpjr2uWy55nXBrnkFmVpA2gGGq",
     "isAdmin": false
   },
   {
     "id": "4",
     "username": "alicesmith",
     "email": "alice@example.com",
-    "password": "hashedPasswordABC",
+    "password": "$2b$10$IKJh9i9XFYi/0MThIF0Mv.wKLpJ/q06mGDFqv1Yhj.V7LFhPZWqkq",
     "isAdmin": false
   },
   {

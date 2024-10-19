@@ -4,4 +4,5 @@ export interface Order {
   products: { productId: string; quantity: number }[];
   totalAmount: number;
   status: "pending" | "in progress" | "completed" | "cancelled";
+  date: Date;
 }

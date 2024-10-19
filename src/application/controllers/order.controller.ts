@@ -1,10 +1,14 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { OrderService } from "../services/order.service";
+import { ProductService } from "../services/product.service";
 import { User } from "../../models/user/user.interface";
 import { Order } from "../../models/order/order.interface";
 
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private productService: ProductService
+  ) {}
 
   private handleError(res: Response, error: unknown, message: string) {
     console.error(`Error in ${message}:`, error);
@@ -38,12 +42,30 @@ export class OrderController {
 
   async getOrdersByUserId(req: Request, res: Response) {
     try {
-      const orders = await this.orderService.getOrdersByUserId(
-        req.params.userId
-      );
-      res.json(orders);
+      const userId = (res.locals.user as User).id;
+      const orders = await this.orderService.getOrdersByUserId(userId);
+      
+      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
+        const productsWithDetails = await Promise.all(order.products.map(async (product) => {
+          const productDetails = await this.productService.getProductById(product.productId);
+          return {
+            ...product,
+            name: productDetails ? productDetails.name : 'Producto no encontrado',
+            price: productDetails ? productDetails.price : 0
+          };
+        }));
+
+        return {
+          ...order,
+          products: productsWithDetails,
+          date: order.date || new Date().toISOString() 
+        };
+      }));
+
+      res.render('orders/list', { orders: ordersWithDetails });
     } catch (error) {
-      this.handleError(res, error, "fetching user orders");
+      console.error("Error fetching user orders:", error);
+      res.status(500).render('error', { message: "Error al obtener las órdenes del usuario" });
     }
   }
 
@@ -59,7 +81,8 @@ export class OrderController {
           quantity: item.quantity
         })),
         totalAmount: items.reduce((total: number, item: any) => total + (item.price * item.quantity), 0),
-        status: 'pending'
+        status: 'pending',
+        date: new Date()
       };
 
       const newOrder = await this.orderService.createOrder(orderData);
@@ -95,6 +118,29 @@ export class OrderController {
       }
     } catch (error) {
       this.handleError(res, error, "deleting order");
+    }
+  }
+
+  async cancelOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const orderId = req.params.id;
+      const userId = (res.locals.user as User).id;
+      const order = await this.orderService.getOrderById(orderId);
+
+      if (!order || order.userId !== userId) {
+        res.status(404).json({ message: "Orden no encontrada" });
+        return;
+      }
+
+      if (order.status !== 'pending') {
+        res.status(400).json({ message: "Solo se pueden cancelar órdenes pendientes" });
+        return;
+      }
+
+      const updatedOrder = await this.orderService.updateOrder(orderId, { status: 'cancelled' });
+      res.json({ message: "Orden cancelada exitosamente", order: updatedOrder });
+    } catch (error) {
+      next(error);
     }
   }
 }
