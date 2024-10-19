@@ -1,74 +1,110 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/user.service";
+import { AuthService } from "../services/auth.service";
 
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService
+  ) {}
 
-  async getAllUsers(req: Request, res: Response) {
+  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { username, password } = req.body;
+      const token = await this.authService.login(username, password);
+      if (token) {
+        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+        res.json({ success: true, message: 'Login exitoso' });
+      } else {
+        res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const existingUser = await this.userService.getUserByUsername(req.body.username);
+      if (existingUser) {
+        res.status(400).json({ success: false, message: 'El usuario ya existe' });
+        return;
+      }
+      const newUser = await this.authService.register(req.body);
+      res.status(201).json({ success: true, message: 'Usuario registrado exitosamente' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { username, newPassword } = req.body;
+      const success = await this.authService.resetPassword(username, newPassword);
+      if (success) {
+        res.json({ success: true, message: 'Contraseña restablecida exitosamente' });
+      } else {
+        res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      res.clearCookie('token');
+      res.json({ success: true, message: 'Sesión cerrada exitosamente' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const users = await this.userService.getAllUsers();
       res.json(users);
     } catch (error) {
-      this.handleError(res, error, "fetching users");
+      next(error);
     }
   }
 
-  async getUserById(req: Request, res: Response) {
+  getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = await this.userService.getUserById(req.params.id);
       if (user) {
         res.json(user);
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ message: "Usuario no encontrado" });
       }
     } catch (error) {
-      this.handleError(res, error, "fetching user");
+      next(error);
     }
   }
 
-  async createUser(req: Request, res: Response) {
+  updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const newUser = await this.userService.createUser(req.body);
-      res.status(201).json(newUser);
-    } catch (error) {
-      this.handleError(res, error, "creating user");
-    }
-  }
-
-  async updateUser(req: Request, res: Response) {
-    try {
-      const updatedUser = await this.userService.updateUser(
-        req.params.id,
-        req.body
-      );
+      const updatedUser = await this.userService.updateUser(req.params.id, req.body);
       if (updatedUser) {
         res.json(updatedUser);
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ message: "Usuario no encontrado" });
       }
     } catch (error) {
-      this.handleError(res, error, "updating user");
+      next(error);
     }
   }
 
-  async deleteUser(req: Request, res: Response) {
+  deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const isDeleted = await this.userService.deleteUser(req.params.id);
       if (isDeleted) {
         res.status(204).send();
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ message: "Usuario no encontrado" });
       }
     } catch (error) {
-      this.handleError(res, error, "deleting user");
+      next(error);
     }
-  }
-
-  private handleError(res: Response, error: unknown, message: string) {
-    console.error(`Error in ${message}:`, error);
-    res.status(500).json({
-      message: `Error ${message.toLowerCase()}`,
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
   }
 }
