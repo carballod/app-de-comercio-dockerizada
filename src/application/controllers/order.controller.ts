@@ -46,17 +46,22 @@ export class OrderController {
           };
         }));
 
+        let orderUser;
+        if (user.isAdmin) {
+          orderUser = await this.userService.getUserById(order.userId);
+        }
         return {
           ...order,
           products: productsWithDetails,
-          userName: user.isAdmin ? await this.userService.getUserById(order.userId) : undefined
+          userName: orderUser ? `${orderUser.username} (${orderUser.id})` : 'Usuario desconocido'
         };
       }));
 
       if (req.accepts('html')) {
         res.render('orders/list', { 
           orders: ordersWithDetails, 
-          isAdmin: user.isAdmin 
+          isAdmin: user.isAdmin ,
+          user: user
         });
       } else {
         res.json(ordersWithDetails);
@@ -177,6 +182,28 @@ export class OrderController {
       } else {
         next(error);
       }
+    }
+  }
+
+  async renderEditOrder(req: Request, res: Response) {
+    try {
+      const orderId = req.params.id;
+      const order = await this.orderService.getOrderById(orderId);
+      if (!order) {
+        return res.status(404).render('error', { message: 'Orden no encontrada' });
+      }
+      const user = await this.userService.getUserById(order.userId);
+      const products = await Promise.all(order.products.map(async (product) => {
+        const productDetails = await this.productService.getProductById(product.productId);
+        return { ...product, name: productDetails ? productDetails.name : 'Producto no encontrado' };
+      }));
+      res.render('orders/edit', { 
+        order: { ...order, products }, 
+        userName: user ? user.username : 'Usuario desconocido',
+        title: 'Editar Orden'
+      });
+    } catch (error) {
+      this.handleError(res, error, "rendering edit order form");
     }
   }
 }

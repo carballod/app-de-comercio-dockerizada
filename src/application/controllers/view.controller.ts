@@ -88,27 +88,62 @@ export class ViewController {
         orders = await this.orderService.getOrdersByUserId(user.id);
       }
 
-      res.render('orders/list', { orders, title: 'Lista de Órdenes', user: user, isAdmin: user.isAdmin });
+      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
+        const productsWithDetails = await Promise.all(order.products.map(async (product) => {
+          const productDetails = await this.productService.getProductById(product.productId);
+          return {
+            ...product,
+            name: productDetails ? productDetails.name : 'Producto no encontrado',
+            description: productDetails ? productDetails.description : 'Descripción no disponible',
+            price: typeof product.price === 'number' ? product.price : undefined
+          };
+        }));
+
+        let orderUser;
+        if (user.isAdmin) {
+          orderUser = await this.userService.getUserById(order.userId);
+        }
+
+        return {
+          ...order,
+          products: productsWithDetails,
+          userName: orderUser ? `${orderUser.username} (${orderUser.id})` : 'Usuario desconocido'
+        };
+      }));
+
+      res.render('orders/list', { 
+        orders: ordersWithDetails, 
+        title: 'Lista de Órdenes', 
+        user: user, 
+        isAdmin: user.isAdmin 
+      });
     } catch (error) {
       console.error('Error al renderizar la lista de órdenes:', error);
       res.status(500).render('error', { message: 'Error interno del servidor' });
     }
   };
 
-  renderEditOrder = async (req: Request, res: Response) => {
+  async renderEditOrder(req: Request, res: Response) {
     try {
       const orderId = req.params.id;
       const order = await this.orderService.getOrderById(orderId);
-      if (order) {
-        res.render('orders/edit', { order, title: 'Editar Orden', user: res.locals.user });
-      } else {
-        res.status(404).render('error', { message: 'Orden no encontrada' });
+      if (!order) {
+        return res.status(404).render('error', { message: 'Orden no encontrada' });
       }
+      const user = await this.userService.getUserById(order.userId);
+      const products = await Promise.all(order.products.map(async (product) => {
+        const productDetails = await this.productService.getProductById(product.productId);
+        return { ...product, name: productDetails ? productDetails.name : 'Producto no encontrado' };
+      }));
+      res.render('orders/edit', { 
+        order: { ...order, products }, 
+        userName: user ? user.username : 'Usuario desconocido',
+        title: 'Editar Orden'
+      });
     } catch (error) {
-      console.error('Error al renderizar la edición de la orden:', error);
-      res.status(500).render('error', { message: 'Error interno del servidor' });
+      this.handleError(res, error);
     }
-  };
+  }
 
   async renderUserList(req: Request, res: Response) {
     try {

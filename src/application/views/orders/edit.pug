@@ -1,19 +1,29 @@
 extends ../layout
 
 block content
-  h2 Editar Orden ##{order.id}
+  h1.mb-4 Editar Orden ##{order.id}
   
-  form(action=`/orders/${order.id}/edit` method="POST")
-    .form-group
-      label(for="status") Estado
-      select#status(name="status")
-        option(value="pending" selected=order.status === 'pending') Pendiente
-        option(value="processing" selected=order.status === 'processing') En Proceso
-        option(value="shipped" selected=order.status === 'shipped') Enviado
-        option(value="delivered" selected=order.status === 'delivered') Entregado
+  form(action=`/api/order/${order.id}/edit` method="POST")
+    .mb-3
+      label.form-label(for="status") Estado:
+      select#status.form-select(name="status")
+        each status in ['pending', 'completed', 'cancelled']
+          option(value=status selected=order.status === status)= status.charAt(0).toUpperCase() + status.slice(1)
     
-    .form-group
-      label(for="shippingAddress") Dirección de Envío
-      input#shippingAddress(type="text" name="shippingAddress" value=order.shippingAddress)
+    .mb-3
+      label.form-label Usuario:
+      input.form-control(type="text" value=userName readonly)
     
-    button.btn(type="submit") Actualizar Orden
+    h3.mt-4 Productos:
+    each product in order.products
+      .card.mb-3
+        .card-body
+          h5.card-title= product.name
+          p.card-text Cantidad: #{product.quantity}
+          p.card-text Precio: $#{product.price.toFixed(2)}
+    
+    .mb-3
+      label.form-label(for="totalAmount") Total:
+      input#totalAmount.form-control(type="number" name="totalAmount" value=order.totalAmount step="0.01" required)
+    
+    button.btn.btn-primary(type="submit") Actualizar Orden

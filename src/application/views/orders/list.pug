@@ -15,7 +15,7 @@ block content
               if isAdmin
                 p.card-text
                   strong Usuario: 
-                  | #{order.userName || 'Desconocido'}
+                  | #{order.userName}
               p.card-text
                 strong Estado: 
                 span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
@@ -34,8 +34,14 @@ block content
                       p= product.description
                     p Cantidad: #{product.quantity} - Precio: $#{product.price.toFixed(2)}
               
-              if order.status === 'pending' && !isAdmin
-                button.btn.btn-sm.btn-danger.mt-3(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
+              if order.status === 'pending'
+                if isAdmin
+                  .mt-3
+                    a.btn.btn-sm.btn-primary.me-2(href=`/orders/${order.id}/edit`) Editar Orden
+                    button.btn.btn-sm.btn-danger(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
+                else
+                  button.btn.btn-sm.btn-danger.mt-3(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
+
 
   script.
     async function cancelOrder(orderId) {

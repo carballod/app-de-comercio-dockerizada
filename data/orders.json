@@ -32,8 +32,9 @@
         "price": 1
       }
     ],
-    "totalAmount": 239.96,
-    "status": "pending"
+    "totalAmount": 239.91,
+    "status": "pending",
+    "shippingAddress": "gsdf"
   },
   {
     "id": "3",

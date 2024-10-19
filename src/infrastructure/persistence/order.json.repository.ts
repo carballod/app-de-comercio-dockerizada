@@ -45,6 +45,17 @@ export class OrderJsonRepository implements IOrderRepository {
     const index = orders.findIndex((order) => order.id === id);
     if (index === -1) return null;
 
+    if (typeof orderData.totalAmount === 'string') {
+      orderData.totalAmount = parseFloat(orderData.totalAmount);
+    }
+
+    if (orderData.products) {
+      orderData.products = orderData.products.map(product => ({
+        ...product,
+        price: typeof product.price === 'string' ? parseFloat(product.price) : product.price
+      }));
+    }
+
     orders[index] = { ...orders[index], ...orderData };
     await this.writeOrders(orders);
     return orders[index];

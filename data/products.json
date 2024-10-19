@@ -2,16 +2,10 @@
   {
     "id": "1",
     "name": "Smartphone X",
-    "description": "Latest model with advanced camera and long battery life",
-    "price": 699.99,
-    "category": "Electronics"
-  },
-  {
-    "id": "2",
-    "name": "Leather Wallet",
-    "description": "Genuine leather wallet with multiple card slots",
-    "price": 49.99,
-    "category": "Accessories"
+    "description": "prueba edición de producto",
+    "price": "699.99",
+    "category": "Electronics",
+    "_method": "PUT"
   },
   {
     "id": "3",

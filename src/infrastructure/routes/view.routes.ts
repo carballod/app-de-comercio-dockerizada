@@ -42,7 +42,7 @@ viewRoutes.get("/products/new", authMiddleware, adminMiddleware, viewController.
 viewRoutes.get("/products/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditProductForm.bind(viewController));
 viewRoutes.get("/products/:id", authMiddleware, viewController.renderProductDetails.bind(viewController));
 viewRoutes.get("/orders", authMiddleware, viewController.renderOrderList);
-viewRoutes.get("/orders/:id/edit", authMiddleware, viewController.renderEditOrder);
+viewRoutes.get("/orders/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditOrder.bind(viewController));
 
 viewRoutes.get("/users", authMiddleware, adminMiddleware, viewController.renderUserList.bind(viewController));
 viewRoutes.get("/users/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditUser.bind(viewController));
