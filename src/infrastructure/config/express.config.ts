@@ -17,15 +17,16 @@ export function configureExpress(): express.Application {
   app.use(logger("dev"));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  app.use(cookieParser());
   app.use(express.static(path.join(__dirname, "../../../public")));
+  app.use(cookieParser());
+  app.use(authMiddleware);
+
 
   app.use((req, res, next) => {
     console.log('Path:', req.path);
     console.log('res.locals.user:', res.locals.user);
     next();
   });
-
   app.use("/", viewRoutes);
   app.use("/api/user", userRoutes);
   app.use("/api/product", productRoutes);

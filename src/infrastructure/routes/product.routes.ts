@@ -9,7 +9,7 @@ const productRepository = new ProductJsonRepository();
 const productService = new ProductService(productRepository);
 const productController = new ProductController(productService);
 
-productRoutes.use(authMiddleware);
+productRoutes.use(authMiddleware)
 productRoutes.get("/", productController.getAllProducts.bind(productController));
 productRoutes.get("/:id", productController.getProductById.bind(productController));
 productRoutes.post("/", productController.addProduct.bind(productController));

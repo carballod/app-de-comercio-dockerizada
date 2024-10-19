@@ -16,7 +16,6 @@ userRoutes.post("/login", userController.login);
 userRoutes.post("/register", userController.register);
 userRoutes.post("/reset-password", userController.resetPassword);
 
-userRoutes.use(authMiddleware);
 userRoutes.post("/logout", userController.logout);
 
 userRoutes.use(adminMiddleware);

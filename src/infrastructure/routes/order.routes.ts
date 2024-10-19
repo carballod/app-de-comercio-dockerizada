@@ -19,13 +19,12 @@ const userService = new UserService(userRepository);
 const orderController = new OrderController(orderService, productService, userService);
 
 orderRoutes.use(authMiddleware);
-
 orderRoutes.get("/", orderController.getAllOrders.bind(orderController));
 orderRoutes.get("/:id", orderController.getOrderById.bind(orderController));
 orderRoutes.get("/user/:userId", orderController.getOrdersByUserId.bind(orderController));
 orderRoutes.post("/", orderController.createOrder.bind(orderController));
 orderRoutes.delete("/:id", orderController.deleteOrder.bind(orderController));
 orderRoutes.post("/:id/cancel", orderController.cancelOrder.bind(orderController));
-orderRoutes.post("/:id/edit", authMiddleware, adminMiddleware, orderController.updateOrder.bind(orderController));
+orderRoutes.post("/:id/edit", adminMiddleware, orderController.updateOrder.bind(orderController));
 
 export default orderRoutes;

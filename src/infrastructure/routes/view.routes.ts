@@ -17,6 +17,7 @@ const productService = new ProductService(productRepository);
 const orderService = new OrderService(orderRepository);
 const userService = new UserService(userRepository);
 const viewController = new ViewController(productService, orderService, userService);
+viewRoutes.use(authMiddleware);
 
 viewRoutes.get("/", (req, res) => {
     console.log(res.locals.user);
@@ -34,17 +35,18 @@ viewRoutes.get("/login", (req, res) => {
     viewController.renderLogin(req, res);
   }
 });
+
 viewRoutes.get("/register", viewController.renderRegister.bind(viewController));
 viewRoutes.get("/reset-password", viewController.renderResetPassword.bind(viewController));
 
-viewRoutes.get("/products", authMiddleware, viewController.renderProductList.bind(viewController));
-viewRoutes.get("/products/new", authMiddleware, adminMiddleware, viewController.renderProductForm.bind(viewController));
-viewRoutes.get("/products/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditProductForm.bind(viewController));
-viewRoutes.get("/products/:id", authMiddleware, viewController.renderProductDetails.bind(viewController));
-viewRoutes.get("/orders", authMiddleware, viewController.renderOrderList);
-viewRoutes.get("/orders/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditOrder.bind(viewController));
+viewRoutes.get("/products", viewController.renderProductList.bind(viewController));
+viewRoutes.get("/products/new", adminMiddleware, viewController.renderProductForm.bind(viewController));
+viewRoutes.get("/products/:id/edit", adminMiddleware, viewController.renderEditProductForm.bind(viewController));
+viewRoutes.get("/products/:id", viewController.renderProductDetails.bind(viewController));
+viewRoutes.get("/orders", viewController.renderOrderList);
+viewRoutes.get("/orders/:id/edit", adminMiddleware, viewController.renderEditOrder.bind(viewController));
 
-viewRoutes.get("/users", authMiddleware, adminMiddleware, viewController.renderUserList.bind(viewController));
-viewRoutes.get("/users/:id/edit", authMiddleware, adminMiddleware, viewController.renderEditUser.bind(viewController));
+viewRoutes.get("/users", adminMiddleware, viewController.renderUserList.bind(viewController));
+viewRoutes.get("/users/:id/edit", adminMiddleware, viewController.renderEditUser.bind(viewController));
 
 export default viewRoutes;

@@ -12,15 +12,14 @@ html
         .d-flex.justify-content-between.align-items-center
           h1.h3 App de comercio
           nav
-            a.text-white.me-3(href="/") Inicio
             if user
+              a.text-white.me-3(href="/") Inicio
               if user.isAdmin
                 a.text-white.me-3(href="/users") Usuarios
               a.text-white.me-3(href="/products") Productos
               a.text-white.me-3(href="/orders") Órdenes
               a.text-white#logoutLink(href="#") Cerrar Sesión
             else
-              a.text-white.me-3(href="/login") Iniciar Sesión
               a.text-white(href="/register") Registrarse
     
     main.container.my-4
