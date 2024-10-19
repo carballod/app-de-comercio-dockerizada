@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+  h2 Editar Orden ##{order.id}
+  
+  form(action=`/orders/${order.id}/edit` method="POST")
+    .form-group
+      label(for="status") Estado
+      select#status(name="status")
+        option(value="pending" selected=order.status === 'pending') Pendiente
+        option(value="processing" selected=order.status === 'processing') En Proceso
+        option(value="shipped" selected=order.status === 'shipped') Enviado
+        option(value="delivered" selected=order.status === 'delivered') Entregado
+    
+    .form-group
+      label(for="shippingAddress") Dirección de Envío
+      input#shippingAddress(type="text" name="shippingAddress" value=order.shippingAddress)
+    
+    button.btn(type="submit") Actualizar Orden

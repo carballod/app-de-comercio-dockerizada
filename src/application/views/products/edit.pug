@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  h1 Editar Producto
+  form#editProductForm
+    input(type="hidden" name="id" value=product.id)
+    .mb-3
+      label.form-label(for="name") Nombre
+      input#name.form-control(type="text" name="name" value=product.name required)
+    .mb-3
+      label.form-label(for="description") Descripción
+      textarea#description.form-control(name="description" required)= product.description
+    .mb-3
+      label.form-label(for="price") Precio
+      input#price.form-control(type="number" name="price" value=product.price required)
+    .mb-3
+      label.form-label(for="category") Categoría
+      input#category.form-control(type="text" name="category" value=product.category required)
+    button.btn.btn-primary(type="submit") Guardar Cambios
+
+  script.
+    document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch(`/api/product/${formData.get('id')}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      if (response.ok) {
+        alert('Producto actualizado exitosamente');
+        window.location.href = `/products/${formData.get('id')}`;
+      } else {
+        alert('Error al actualizar el producto');
+      }
+    });

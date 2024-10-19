@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  h1 Editar Usuario
+  form#editUserForm
+    input(type="hidden" name="id" value=user.id)
+    .mb-3
+      label.form-label(for="username") Username
+      input#username.form-control(type="text" name="username" value=user.username required)
+    .mb-3
+      label.form-label(for="email") Email
+      input#email.form-control(type="email" name="email" value=user.email required)
+    .mb-3
+      label.form-label(for="isAdmin") Es Admin
+      select#isAdmin.form-control(name="isAdmin")
+        option(value="true" selected=user.isAdmin) Sí
+        option(value="false" selected=!user.isAdmin) No
+    button.btn.btn-primary(type="submit") Guardar Cambios
+
+  script.
+    document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch(`/api/user/${formData.get('id')}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      if (response.ok) {
+        alert('Usuario actualizado exitosamente');
+        window.location.href = '/users';
+      } else {
+        alert('Error al actualizar el usuario');
+      }
+    });

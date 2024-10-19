@@ -1,0 +1,50 @@
+extends ../layout
+
+block content
+  h1= title
+  form(action=product ? `/api/product/${product.id}` : '/api/product', method='POST')
+    if product
+      input(type='hidden', name='_method', value='PUT')
+    .form-group
+      label(for='name') Nombre
+      input#name.form-control(type='text', name='name', value=product ? product.name : '', required)
+    .form-group
+      label(for='description') Descripción
+      textarea#description.form-control(name='description', required)= product ? product.description : ''
+    .form-group
+      label(for='price') Precio
+      input#price.form-control(type='number', name='price', step='0.01', value=product ? product.price : '', required)
+    .form-group
+      label(for='category') Categoría
+      input#category.form-control(type='text', name='category', value=product ? product.category : '', required)
+    button.btn.btn-primary(type='submit') Guardar
+
+  script.
+    document.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const method = form.querySelector('input[name="_method"]') ? 'PUT' : 'POST';
+      const url = form.action;
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          body: JSON.stringify(Object.fromEntries(formData)),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          alert(method === 'POST' ? 'Producto creado exitosamente' : 'Producto actualizado exitosamente');
+          window.location.href = '/products';
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Ha ocurrido un error al procesar la solicitud');
+      }
+    });

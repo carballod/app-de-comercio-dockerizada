@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  h1 Registro
+  form#registerForm
+    .mb-3
+      label.form-label(for="username") Nombre de usuario
+      input#username.form-control(type="text" name="username" required)
+    .mb-3
+      label.form-label(for="email") Correo electrónico
+      input#email.form-control(type="email" name="email" required)
+    .mb-3
+      label.form-label(for="password") Contraseña
+      input#password.form-control(type="password" name="password" required)
+    button.btn.btn-primary(type="submit") Registrarse
+  p ¿Ya tienes una cuenta? 
+    a(href="/login") Inicia sesión aquí
+
+  script.
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const response = await fetch('/api/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        window.location.href = '/login';
+      } else {
+        alert(data.message);
+      }
+    });

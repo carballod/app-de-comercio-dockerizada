@@ -1,0 +1,46 @@
+extends ../layout
+
+block content
+  h1 Mis Órdenes
+  table.table
+    thead
+      tr
+        th ID
+        th Producto
+        th Cantidad
+        th Fecha
+        th Estado
+        th Acciones
+    tbody
+      each order in orders
+        tr
+          td= order.id
+          td= order.productId
+          td= order.quantity
+          td= order.date
+          td= order.status
+          td
+            if order.status !== 'cancelled' && order.status !== 'completed'
+              button.btn.btn-sm.btn-danger.cancel-order-btn(data-order-id=order.id) Cancelar
+            if user && user.isAdmin
+              a.btn.btn-sm.btn-warning.ml-2(href=`orders/${order.id}/edit`) Editar
+
+  script.
+    document.querySelectorAll('.cancel-order-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const orderId = e.target.getAttribute('data-order-id');
+        if (confirm('¿Estás seguro de que quieres cancelar esta orden?')) {
+          const response = await fetch(`api/order/${orderId}/cancel`, {
+            method: 'POST',
+          });
+          if (response.ok) {
+            const row = e.target.closest('tr');
+            row.querySelector('td:nth-child(5)').textContent = 'cancelled';
+            e.target.remove(); 
+            alert('Orden cancelada exitosamente');
+          } else {
+            alert('Error al cancelar la orden');
+          }
+        }
+      });
+    });

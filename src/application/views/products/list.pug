@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+  h2.text-center.mb-4 Nuestros Productos
+  
+  .container
+    .row.row-cols-1.row-cols-md-3.g-4
+      each product in products
+        .col
+          .card.h-100
+            .card-body
+              h5.card-title= product.name
+              p.card-text.text-muted $#{product.price}
+              a.btn.btn-primary.btn-sm(href=`/products/${product.id}`) Ver detalles
+              if user && user.isAdmin
+                button.btn.btn-danger.btn-sm.ms-2.delete-product-btn(data-product-id=product.id) Eliminar
+    
+    if user && user.isAdmin
+      .mt-4.text-center
+        a.btn.btn-success(href="/products/new") Agregar nuevo producto
+
+  script.
+    document.querySelectorAll('.delete-product-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const productId = e.target.getAttribute('data-product-id');
+        if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+          try {
+            const response = await fetch(`/api/product/${productId}`, {
+              method: 'DELETE',
+            });
+            if (response.ok) {
+              e.target.closest('.col').remove();
+              alert('Producto eliminado exitosamente');
+            } else {
+              alert('Error al eliminar el producto');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el producto');
+          }
+        }
+      });
+    });

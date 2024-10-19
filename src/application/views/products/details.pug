@@ -1,0 +1,54 @@
+extends ../layout
+
+block content
+  h1= product.name
+  p Descripción: #{product.description}
+  p Precio: $#{product.price}
+  p Categoría: #{product.category}
+  
+  if user && !user.isAdmin
+    form#buyForm
+      input(type="hidden" name="productId" value=product.id)
+      button.btn.btn-success(type="submit") Comprar
+  
+  if user && user.isAdmin
+    a.btn.btn-warning#editProductBtn(href=`/products/${product.id}/edit`) Editar
+    button.btn.btn-danger.ml-2#deleteProductBtn Eliminar
+
+  script.
+    if (document.getElementById('buyForm')) {
+      document.getElementById('buyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const response = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: e.target.productId.value,
+            quantity: 1
+          })
+        });
+        const data = await response.json();
+        if (data.success) {
+          alert('Compra realizada con éxito');
+          window.location.href = '/orders';
+        } else {
+          alert('Error al realizar la compra');
+        }
+      });
+    }
+
+    if (document.getElementById('deleteProductBtn')) {
+      document.getElementById('deleteProductBtn').addEventListener('click', async () => {
+        if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+          const response = await fetch(`/api/product/${product.id}`, {
+            method: 'DELETE',
+          });
+          if (response.ok) {
+            alert('Producto eliminado exitosamente');
+            window.location.href = '/products';
+          } else {
+            alert('Error al eliminar el producto');
+          }
+        }
+      });
+    }

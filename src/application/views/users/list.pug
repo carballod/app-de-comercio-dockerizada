@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  h1 Listado de Usuarios
+  table.table
+    thead
+      tr
+        th ID
+        th Username
+        th Email
+        th Admin
+        th Acciones
+    tbody
+      each user in users
+        tr
+          td= user.id
+          td= user.username
+          td= user.email
+          td= user.isAdmin ? 'Sí' : 'No'
+          td
+            a.btn.btn-sm.btn-warning(href=`/users/${user.id}/edit`) Editar
+            button.btn.btn-sm.btn-danger.ml-2.delete-user-btn(data-user-id=user.id) Eliminar
+
+  script.
+    document.querySelectorAll('.delete-user-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const userId = e.target.getAttribute('data-user-id');
+        if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+          const response = await fetch(`/api/user/${userId}`, {
+            method: 'DELETE',
+          });
+          if (response.ok) {
+            e.target.closest('tr').remove();
+            alert('Usuario eliminado exitosamente');
+          } else {
+            alert('Error al eliminar el usuario');
+          }
+        }
+      });
+    });

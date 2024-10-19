@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  h1 Bienvenido, #{user.username}!
+  
+  .quick-links
+    h2 Accesos rápidos
+    ul
+    if user.isAdmin
+      li
+        a(href="/products") Administrar productos
+      li
+        a(href="/orders") Administrar órdenes
+      li 
+        a(href="/products") Administrar usuarios
+    else
+      li
+        a(href="/products") Ver productos
+      li
+        a(href="/orders") Mis órdenes
