@@ -3,7 +3,8 @@ extends ../layout
 block content
   h1.mb-4 Editar Orden ##{order.id}
   
-  form(action=`/api/order/${order.id}/edit` method="POST")
+  form#editOrderForm
+    input(type="hidden" name="id" value=order.id)
     .mb-3
       label.form-label(for="status") Estado:
       select#status.form-select(name="status")
@@ -27,3 +28,20 @@ block content
       input#totalAmount.form-control(type="number" name="totalAmount" value=order.totalAmount step="0.01" required)
     
     button.btn.btn-primary(type="submit") Actualizar Orden
+
+  script.
+    document.getElementById('editOrderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const response = await fetch(`/api/order/${formData.get('id')}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+      });
+      if (response.ok) {
+        alert('Orden actualizada exitosamente');
+        window.location.href = '/orders';
+      } else {
+        alert('Error al actualizar la orden');
+      }
+    });

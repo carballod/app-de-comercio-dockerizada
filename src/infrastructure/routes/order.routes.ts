@@ -25,6 +25,6 @@ orderRoutes.get("/user/:userId", orderController.getOrdersByUserId.bind(orderCon
 orderRoutes.post("/", orderController.createOrder.bind(orderController));
 orderRoutes.delete("/:id", orderController.deleteOrder.bind(orderController));
 orderRoutes.post("/:id/cancel", orderController.cancelOrder.bind(orderController));
-orderRoutes.post("/:id/edit", adminMiddleware, orderController.updateOrder.bind(orderController));
+orderRoutes.put("/:id", orderController.updateOrder.bind(orderController));
 
 export default orderRoutes;

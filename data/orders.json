@@ -33,7 +33,7 @@
       }
     ],
     "totalAmount": 239.91,
-    "status": "pending",
+    "status": "completed",
     "shippingAddress": "gsdf"
   },
   {
@@ -60,7 +60,7 @@
       }
     ],
     "totalAmount": 359.96,
-    "status": "pending",
+    "status": "cancelled",
     "date": "2024-10-19T18:28:48.323Z"
   }
 ]

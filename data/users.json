@@ -2,9 +2,9 @@
   {
     "id": "1",
     "username": "admin",
-    "email": "admin@example.com",
+    "email": "admin@example.com.ar",
     "password": "$2b$10$987EuBQfQ8/v1dmIwZXkkO2A57bxvTIYsB8kqqG68pRtT1F83tdNu",
-    "isAdmin": true
+    "isAdmin": "true"
   },
   {
     "id": "3",
