@@ -13,6 +13,7 @@ block content
               p.card-text.text-muted $#{product.price}
               a.btn.btn-primary.btn-sm(href=`/products/${product.id}`) Ver detalles
               if user && user.isAdmin
+                a.btn.btn-warning.btn-sm.ms-2(href=`/products/${product.id}/edit`) Editar
                 button.btn.btn-danger.btn-sm.ms-2.delete-product-btn(data-product-id=product.id) Eliminar
     
     if user && user.isAdmin

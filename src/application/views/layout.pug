@@ -14,6 +14,8 @@ html
           nav
             a.text-white.me-3(href="/") Inicio
             if user
+              if user.isAdmin
+                a.text-white.me-3(href="/users") Usuarios
               a.text-white.me-3(href="/products") Productos
               a.text-white.me-3(href="/orders") Órdenes
               a.text-white#logoutLink(href="#") Cerrar Sesión

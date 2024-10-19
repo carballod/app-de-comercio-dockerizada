@@ -29,7 +29,7 @@ export class ViewController {
   renderProductList = async (req: Request, res: Response) => {
     try {
       const products = await this.productService.getAllProducts();
-      res.render('products/list', { title: 'Listado de Productos', products, user: req.user });
+      res.render('products/list', { title: 'Listado de Productos', products, user: res.locals.user });
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).render('error', { message: "Error al obtener los productos" });
@@ -40,7 +40,7 @@ export class ViewController {
     try {
       const product = await this.productService.getProductById(req.params.id);
       if (product) {
-        res.render('products/details', { title: 'Detalles del Producto', product, user: req.user });
+        res.render('products/details', { title: 'Detalles del Producto', product, user: res.locals.user });
       } else {
         res.status(404).render('error', { message: 'Producto no encontrado' });
       }
@@ -52,7 +52,7 @@ export class ViewController {
 
   renderProductForm(req: Request, res: Response, next: NextFunction) {
     try {
-      res.render('products/form', { title: 'Agregar Producto', user: req.user });
+      res.render('products/form', { title: 'Agregar Producto', user: res.locals.user });
     } catch (error) {
       next(error);
     }
@@ -62,7 +62,7 @@ export class ViewController {
     try {
       const product = await this.productService.getProductById(req.params.id);
       if (product) {
-        res.render('products/edit', { title: 'Editar Producto', product, user: req.user });
+        res.render('products/edit', { title: 'Editar Producto', product, user: res.locals.user });
       } else {
         res.status(404).render('error', { message: 'Producto no encontrado' });
       }
@@ -75,7 +75,7 @@ export class ViewController {
   renderOrderList = async (req: Request, res: Response) => {
     try {
       const orders = await this.orderService.getAllOrders();
-      res.render('orders/list', { orders, title: 'Lista de Órdenes' });
+      res.render('orders/list', { orders, title: 'Lista de Órdenes', user: res.locals.user });
     } catch (error) {
       console.error('Error al renderizar la lista de órdenes:', error);
       res.status(500).render('error', { message: 'Error interno del servidor' });
@@ -87,7 +87,7 @@ export class ViewController {
       const orderId = req.params.id;
       const order = await this.orderService.getOrderById(orderId);
       if (order) {
-        res.render('orders/edit', { order, title: 'Editar Orden' });
+        res.render('orders/edit', { order, title: 'Editar Orden', user: res.locals.user });
       } else {
         res.status(404).render('error', { message: 'Orden no encontrada' });
       }
@@ -100,7 +100,7 @@ export class ViewController {
   async renderUserList(req: Request, res: Response) {
     try {
       const users = await this.userService.getAllUsers();
-      res.render('users/list', { title: 'Listado de Usuarios', users, user: req.user });
+      res.render('users/list', { title: 'Listado de Usuarios', users, user: res.locals.user });
     } catch (error) {
       console.error("Error fetching users for view:", error);
       res.status(500).render('error', { message: 'Error al obtener los usuarios' });
@@ -111,7 +111,7 @@ export class ViewController {
     try {
       const user = await this.userService.getUserById(req.params.id);
       if (user) {
-        res.render('users/edit', { title: 'Editar Usuario', user, currentUser: req.user });
+        res.render('users/edit', { title: 'Editar Usuario', user, currentUser: res.locals.user });
       } else {
         res.status(404).render('error', { message: 'Usuario no encontrado' });
       }
@@ -126,7 +126,7 @@ export class ViewController {
       const productId = req.params.id;
       const product = await this.productService.getProductById(productId);
       if (product) {
-        res.render('products/form', { title: 'Editar Producto', product, user: req.user });
+        res.render('products/form', { title: 'Editar Producto', product, user: res.locals.user });
       } else {
         res.status(404).render('error', { message: 'Producto no encontrado' });
       }

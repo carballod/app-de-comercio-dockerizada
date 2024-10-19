@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models/user/user.interface';
 
 export const adminMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const user = req.user as User;
+  const user = res.locals.user as User;
 
   if (user && user.isAdmin) {
     next();
