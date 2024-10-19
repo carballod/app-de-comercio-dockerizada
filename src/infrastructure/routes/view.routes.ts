@@ -8,6 +8,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 import { UserService } from "../../application/services/user.service";
 import { UserJsonRepository } from "../persistence/user.json.repository";
+import { OrderDetailService } from "../../application/services/order-detail.service";
 
 const viewRoutes = express.Router();
 const userRepository = new UserJsonRepository();
@@ -16,7 +17,8 @@ const orderRepository = new OrderJsonRepository();
 const productService = new ProductService(productRepository);
 const orderService = new OrderService(orderRepository);
 const userService = new UserService(userRepository);
-const viewController = new ViewController(productService, orderService, userService);
+const orderDetailService = new OrderDetailService(orderService, userService, productService);
+const viewController = new ViewController(productService, orderService, userService, orderDetailService);
 viewRoutes.use(authMiddleware);
 
 viewRoutes.get("/", (req, res) => {

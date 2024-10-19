@@ -4,11 +4,12 @@ import { ProductService } from "../services/product.service";
 import { User } from "../../models/user/user.interface";
 import { Order } from "../../models/order/order.interface";
 import { UserService } from "../services/user.service";
+import { OrderDetailService } from "../services/order-detail.service";
+
 export class OrderController {
   constructor(
     private orderService: OrderService,
-    private productService: ProductService,
-    private userService: UserService
+    private orderDetailService: OrderDetailService
   ) {}
 
   private handleError(res: Response, error: unknown, message: string) {
@@ -35,32 +36,12 @@ export class OrderController {
         orders = await this.orderService.getOrdersByUserId(user.id);
       }
 
-      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
-        const productsWithDetails = await Promise.all(order.products.map(async (product) => {
-          const productDetails = await this.productService.getProductById(product.productId);
-          return {
-            ...product,
-            name: productDetails ? productDetails.name : 'Producto no encontrado',
-            description: productDetails ? productDetails.description : 'Descripción no disponible',
-            price: typeof product.price === 'number' ? product.price : undefined
-          };
-        }));
-
-        let orderUser;
-        if (user.isAdmin) {
-          orderUser = await this.userService.getUserById(order.userId);
-        }
-        return {
-          ...order,
-          products: productsWithDetails,
-          userName: orderUser ? `${orderUser.username} (${orderUser.id})` : 'Usuario desconocido'
-        };
-      }));
+      const ordersWithDetails = await this.orderDetailService.getMultipleOrdersDetails(orders, user.isAdmin);
 
       if (req.accepts('html')) {
         res.render('orders/list', { 
           orders: ordersWithDetails, 
-          isAdmin: user.isAdmin ,
+          isAdmin: user.isAdmin,
           user: user
         });
       } else {
@@ -89,27 +70,11 @@ export class OrderController {
       const userId = (res.locals.user as User).id;
       const orders = await this.orderService.getOrdersByUserId(userId);
       
-      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
-        const productsWithDetails = await Promise.all(order.products.map(async (product) => {
-          const productDetails = await this.productService.getProductById(product.productId);
-          return {
-            ...product,
-            name: productDetails ? productDetails.name : 'Producto no encontrado',
-            price: productDetails ? productDetails.price : 0
-          };
-        }));
-
-        return {
-          ...order,
-          products: productsWithDetails,
-          date: order.date || new Date().toISOString() 
-        };
-      }));
+      const ordersWithDetails = await this.orderDetailService.getMultipleOrdersDetails(orders, false);
 
       res.render('orders/list', { orders: ordersWithDetails });
     } catch (error) {
-      console.error("Error fetching user orders:", error);
-      res.status(500).render('error', { message: "Error al obtener las órdenes del usuario" });
+      this.handleError(res, error, "fetching user orders");
     }
   }
 
@@ -182,28 +147,6 @@ export class OrderController {
       } else {
         next(error);
       }
-    }
-  }
-
-  async renderEditOrder(req: Request, res: Response) {
-    try {
-      const orderId = req.params.id;
-      const order = await this.orderService.getOrderById(orderId);
-      if (!order) {
-        return res.status(404).render('error', { message: 'Orden no encontrada' });
-      }
-      const user = await this.userService.getUserById(order.userId);
-      const products = await Promise.all(order.products.map(async (product) => {
-        const productDetails = await this.productService.getProductById(product.productId);
-        return { ...product, name: productDetails ? productDetails.name : 'Producto no encontrado' };
-      }));
-      res.render('orders/edit', { 
-        order: { ...order, products }, 
-        userName: user ? user.username : 'Usuario desconocido',
-        title: 'Editar Orden'
-      });
-    } catch (error) {
-      this.handleError(res, error, "rendering edit order form");
     }
   }
 }

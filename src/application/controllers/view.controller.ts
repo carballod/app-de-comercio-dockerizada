@@ -3,12 +3,15 @@ import { ProductService } from "../services/product.service";
 import { OrderService } from "../services/order.service";
 import { UserService } from "../services/user.service";
 import { User } from "../../models/user/user.interface";
+import { OrderDetailService } from "../services/order-detail.service";
 
 export class ViewController {
   constructor(
     private productService: ProductService,
     private orderService: OrderService,
-    private userService: UserService
+    private userService: UserService,
+    private orderDetailService: OrderDetailService,
+
   ) {}
 
   renderLogin = (req: Request, res: Response) => {
@@ -123,27 +126,23 @@ export class ViewController {
     }
   };
 
+
   async renderEditOrder(req: Request, res: Response) {
     try {
       const orderId = req.params.id;
-      const order = await this.orderService.getOrderById(orderId);
-      if (!order) {
+      const orderDetails = await this.orderDetailService.getOrderDetails(orderId);
+      if (!orderDetails) {
         return res.status(404).render('error', { message: 'Orden no encontrada' });
       }
-      const user = await this.userService.getUserById(order.userId);
-      const products = await Promise.all(order.products.map(async (product) => {
-        const productDetails = await this.productService.getProductById(product.productId);
-        return { ...product, name: productDetails ? productDetails.name : 'Producto no encontrado' };
-      }));
       res.render('orders/edit', { 
-        order: { ...order, products }, 
-        userName: user ? user.username : 'Usuario desconocido',
+        ...orderDetails,
         title: 'Editar Orden'
       });
     } catch (error) {
       this.handleError(res, error);
     }
   }
+
 
   async renderUserList(req: Request, res: Response) {
     try {
