@@ -3,11 +3,12 @@ import { OrderService } from "../services/order.service";
 import { ProductService } from "../services/product.service";
 import { User } from "../../models/user/user.interface";
 import { Order } from "../../models/order/order.interface";
-
+import { UserService } from "../services/user.service";
 export class OrderController {
   constructor(
     private orderService: OrderService,
-    private productService: ProductService
+    private productService: ProductService,
+    private userService: UserService
   ) {}
 
   private handleError(res: Response, error: unknown, message: string) {
@@ -18,10 +19,48 @@ export class OrderController {
     });
   }
 
-  async getAllOrders(req: Request, res: Response) {
+  async getAllOrders(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const orders = await this.orderService.getAllOrders();
-      res.json(orders);
+      const user = res.locals.user as User;
+      if (!user) {
+        res.status(401).json({ message: "Usuario no autenticado" });
+        return;
+      }
+
+      let orders: Order[];
+
+      if (user.isAdmin) {
+        orders = await this.orderService.getAllOrders();
+      } else {
+        orders = await this.orderService.getOrdersByUserId(user.id);
+      }
+
+      const ordersWithDetails = await Promise.all(orders.map(async (order) => {
+        const productsWithDetails = await Promise.all(order.products.map(async (product) => {
+          const productDetails = await this.productService.getProductById(product.productId);
+          return {
+            ...product,
+            name: productDetails ? productDetails.name : 'Producto no encontrado',
+            description: productDetails ? productDetails.description : 'Descripción no disponible',
+            price: typeof product.price === 'number' ? product.price : undefined
+          };
+        }));
+
+        return {
+          ...order,
+          products: productsWithDetails,
+          userName: user.isAdmin ? await this.userService.getUserById(order.userId) : undefined
+        };
+      }));
+
+      if (req.accepts('html')) {
+        res.render('orders/list', { 
+          orders: ordersWithDetails, 
+          isAdmin: user.isAdmin 
+        });
+      } else {
+        res.json(ordersWithDetails);
+      }
     } catch (error) {
       this.handleError(res, error, "fetching orders");
     }
@@ -78,7 +117,8 @@ export class OrderController {
         userId,
         products: items.map((item: any) => ({
           productId: item.id,
-          quantity: item.quantity
+          quantity: item.quantity,
+          price: item.price
         })),
         totalAmount: items.reduce((total: number, item: any) => total + (item.price * item.quantity), 0),
         status: 'pending',
