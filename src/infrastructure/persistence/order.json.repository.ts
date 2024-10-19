@@ -58,4 +58,14 @@ export class OrderJsonRepository implements IOrderRepository {
     await this.writeOrders(filteredOrders);
     return true;
   }
+
+  async cancelOrder(id: string): Promise<Order | null> {
+    const orders = await this.readOrders();
+    const orderIndex = orders.findIndex((order) => order.id === id);
+    if (orderIndex === -1) return null;
+
+    orders[orderIndex].status = "cancelled";
+    await this.writeOrders(orders);
+    return orders[orderIndex];
+  }
 }

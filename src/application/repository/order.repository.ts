@@ -7,4 +7,5 @@ export interface IOrderRepository {
   save(order: Omit<Order, "id">): Promise<Order>;
   update(id: string, order: Partial<Omit<Order, "id">>): Promise<Order | null>;
   deleteById(id: string): Promise<boolean>;
+  cancelOrder(id: string): Promise<Order | null>;
 }

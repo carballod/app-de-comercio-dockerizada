@@ -124,23 +124,19 @@ export class OrderController {
   async cancelOrder(req: Request, res: Response, next: NextFunction) {
     try {
       const orderId = req.params.id;
-      const userId = (res.locals.user as User).id;
-      const order = await this.orderService.getOrderById(orderId);
-
-      if (!order || order.userId !== userId) {
+      const user = res.locals.user as User;
+      const cancelledOrder = await this.orderService.cancelOrder(orderId, user.id, user.isAdmin);
+      if (cancelledOrder) {
+        res.json({ message: "Orden cancelada exitosamente", order: cancelledOrder });
+      } else {
         res.status(404).json({ message: "Orden no encontrada" });
-        return;
       }
-
-      if (order.status !== 'pending') {
-        res.status(400).json({ message: "Solo se pueden cancelar órdenes pendientes" });
-        return;
-      }
-
-      const updatedOrder = await this.orderService.updateOrder(orderId, { status: 'cancelled' });
-      res.json({ message: "Orden cancelada exitosamente", order: updatedOrder });
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        next(error);
+      }
     }
   }
 }
