@@ -15,10 +15,29 @@ block content
               if user && user.isAdmin
                 a.btn.btn-warning.btn-sm.ms-2(href=`/products/${product.id}/edit`) Editar
                 button.btn.btn-danger.btn-sm.ms-2.delete-product-btn(data-product-id=product.id) Eliminar
+              else if user
+                button.btn.btn-success.btn-sm.ms-2.add-to-cart-btn(data-product-id=product.id, data-product-name=product.name, data-product-price=product.price) Agregar al carrito
     
     if user && user.isAdmin
       .mt-4.text-center
         a.btn.btn-success(href="/products/new") Agregar nuevo producto
+
+  #cartModal.modal.fade(tabindex='-1', aria-labelledby='cartModalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5#cartModalLabel.modal-title Carrito de Compras
+          button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+        .modal-body
+          #cartItems
+        .modal-footer
+          button#payButton.btn.btn-primary(type='button') Pagar
+          button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cerrar
+
+  if user && !user.isAdmin
+    button#openCartBtn.btn.btn-primary.position-fixed.top-0.end-0.m-3(type='button', data-bs-toggle='modal', data-bs-target='#cartModal')
+    i.bi.bi-cart-fill
+    span.badge.bg-danger.ms-1#cartItemCount 0
 
   script.
     document.querySelectorAll('.delete-product-btn').forEach(button => {
@@ -41,4 +60,75 @@ block content
           }
         }
       });
+    });
+
+    let cart = [];
+
+    function updateCartItemCount() {
+      const count = cart.reduce((total, item) => total + item.quantity, 0);
+      document.getElementById('cartItemCount').textContent = count;
+    }
+
+    function updateCartModal() {
+      const cartItems = document.getElementById('cartItems');
+      cartItems.innerHTML = '';
+      let total = 0;
+
+      cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = `${item.name} - $${item.price} x ${item.quantity}`;
+        cartItems.appendChild(itemElement);
+        total += item.price * item.quantity;
+      });
+
+      const totalElement = document.createElement('div');
+      totalElement.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
+      cartItems.appendChild(totalElement);
+    }
+
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const productId = e.target.getAttribute('data-product-id');
+        const productName = e.target.getAttribute('data-product-name');
+        const productPrice = parseFloat(e.target.getAttribute('data-product-price'));
+
+        const existingItem = cart.find(item => item.id === productId);
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+        }
+
+        updateCartItemCount();
+        updateCartModal();
+      });
+    });
+
+    document.getElementById('payButton').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cart })
+        });
+
+        if (response.ok) {
+          alert('Pago realizado con éxito. Orden generada.');
+          cart = [];
+          updateCartItemCount();
+          updateCartModal();
+          bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+        } else {
+          alert('Error al procesar el pago.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar el pago.');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new bootstrap.Modal(document.getElementById('cartModal'));
+      updateCartItemCount();
+      updateCartModal();
     });

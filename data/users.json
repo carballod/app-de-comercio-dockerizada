@@ -7,13 +7,6 @@
     "isAdmin": true
   },
   {
-    "id": "2",
-    "username": "johndoe",
-    "email": "john@example.com",
-    "password": "hashedPassword456",
-    "isAdmin": false
-  },
-  {
     "id": "3",
     "username": "janedoe",
     "email": "jane@example.com",
@@ -26,5 +19,12 @@
     "email": "alice@example.com",
     "password": "hashedPasswordABC",
     "isAdmin": false
+  },
+  {
+    "username": "usuario",
+    "email": "user@dfdf",
+    "password": "$2b$10$Yxq5Mt0nfGn0lJfbY3EsROeUhOOqlV5.UdvFujct6M3lqfpImeaC.",
+    "isAdmin": false,
+    "id": "1729353242531"
   }
 ]

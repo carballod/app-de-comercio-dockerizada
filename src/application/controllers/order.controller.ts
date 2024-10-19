@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { OrderService } from "../services/order.service";
+import { User } from "../../models/user/user.interface";
+import { Order } from "../../models/order/order.interface";
 
 export class OrderController {
   constructor(private orderService: OrderService) {}
@@ -47,8 +49,21 @@ export class OrderController {
 
   async createOrder(req: Request, res: Response) {
     try {
-      const newOrder = await this.orderService.createOrder(req.body);
-      res.status(201).json(newOrder);
+      const userId = (res.locals.user as User).id;
+      const { items } = req.body;
+
+      const orderData: Omit<Order, 'id'> = {
+        userId,
+        products: items.map((item: any) => ({
+          productId: item.id,
+          quantity: item.quantity
+        })),
+        totalAmount: items.reduce((total: number, item: any) => total + (item.price * item.quantity), 0),
+        status: 'pending'
+      };
+
+      const newOrder = await this.orderService.createOrder(orderData);
+      res.status(201).json({ message: 'Orden creada exitosamente', order: newOrder });
     } catch (error) {
       this.handleError(res, error, "creating order");
     }

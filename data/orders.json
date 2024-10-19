@@ -3,8 +3,14 @@
     "id": "1",
     "userId": "2",
     "products": [
-      { "productId": "1", "quantity": 2 },
-      { "productId": "3", "quantity": 1 }
+      {
+        "productId": "1",
+        "quantity": 2
+      },
+      {
+        "productId": "3",
+        "quantity": 1
+      }
     ],
     "totalAmount": 149.97,
     "status": "completed"
@@ -13,8 +19,14 @@
     "id": "2",
     "userId": "3",
     "products": [
-      { "productId": "2", "quantity": 1 },
-      { "productId": "4", "quantity": 3 }
+      {
+        "productId": "2",
+        "quantity": 1
+      },
+      {
+        "productId": "4",
+        "quantity": 3
+      }
     ],
     "totalAmount": 239.96,
     "status": "pending"
@@ -22,7 +34,12 @@
   {
     "id": "3",
     "userId": "4",
-    "products": [{ "productId": "5", "quantity": 1 }],
+    "products": [
+      {
+        "productId": "5",
+        "quantity": 1
+      }
+    ],
     "totalAmount": 159.99,
     "status": "cancelled"
   },
@@ -30,9 +47,18 @@
     "id": "4",
     "userId": "2",
     "products": [
-      { "productId": "1", "quantity": 1 },
-      { "productId": "2", "quantity": 1 },
-      { "productId": "3", "quantity": 1 }
+      {
+        "productId": "1",
+        "quantity": 1
+      },
+      {
+        "productId": "2",
+        "quantity": 1
+      },
+      {
+        "productId": "3",
+        "quantity": 1
+      }
     ],
     "totalAmount": 219.97,
     "status": "completed"
@@ -41,10 +67,84 @@
     "id": "5",
     "userId": "5",
     "products": [
-      { "productId": "4", "quantity": 2 },
-      { "productId": "5", "quantity": 1 }
+      {
+        "productId": "4",
+        "quantity": 2
+      },
+      {
+        "productId": "5",
+        "quantity": 1
+      }
     ],
     "totalAmount": 259.97,
     "status": "pending"
+  },
+  {
+    "productId": "2",
+    "quantity": 1,
+    "id": "1729353349857"
+  },
+  {
+    "productId": "2",
+    "quantity": 1,
+    "id": "1729354276328"
+  },
+  {
+    "items": [
+      {
+        "id": "1",
+        "name": "Smartphone X",
+        "price": 699.99,
+        "quantity": 1
+      },
+      {
+        "id": "3",
+        "name": "Running Shoes",
+        "price": 89.99,
+        "quantity": 1
+      }
+    ],
+    "id": "1729354285415"
+  },
+  {
+    "items": [
+      {
+        "id": "1",
+        "name": "Smartphone X",
+        "price": 699.99,
+        "quantity": 1
+      },
+      {
+        "id": "2",
+        "name": "Leather Wallet",
+        "price": 49.99,
+        "quantity": 1
+      },
+      {
+        "id": "3",
+        "name": "Running Shoes",
+        "price": 89.99,
+        "quantity": 1
+      },
+      {
+        "id": "4",
+        "name": "Coffee Maker",
+        "price": 79.99,
+        "quantity": 1
+      },
+      {
+        "id": "5",
+        "name": "Wireless Headphones",
+        "price": 159.99,
+        "quantity": 1
+      },
+      {
+        "id": "6",
+        "name": "Yoga Mat",
+        "price": 29.99,
+        "quantity": 1
+      }
+    ],
+    "id": "1729354362336"
   }
 ]
