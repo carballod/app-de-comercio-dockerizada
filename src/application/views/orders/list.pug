@@ -1,10 +1,10 @@
 extends ../layout
 
 block content
-  h1.mb-4 Mis Órdenes
+  h1.mb-4 #{isAdmin ? 'Todas las Órdenes' : 'Mis Órdenes'}
 
   if orders.length === 0
-    p No tienes órdenes aún.
+    p No hay órdenes para mostrar.
   else
     .row
       each order in orders
@@ -12,6 +12,10 @@ block content
           .card
             .card-body
               h5.card-title Orden ##{order.id}
+              if isAdmin
+                p.card-text
+                  strong Usuario: 
+                  | #{order.userName || 'Desconocido'}
               p.card-text
                 strong Estado: 
                 span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
@@ -25,9 +29,12 @@ block content
               ul.list-group.list-group-flush
                 each product in order.products
                   li.list-group-item
-                    | #{product.name} - Cantidad: #{product.quantity}
+                    h6= product.name
+                    if product.description
+                      p= product.description
+                    p Cantidad: #{product.quantity} - Precio: $#{product.price.toFixed(2)}
               
-              if order.status === 'pending'
+              if order.status === 'pending' && !isAdmin
                 button.btn.btn-sm.btn-danger.mt-3(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
 
   script.

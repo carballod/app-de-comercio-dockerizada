@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../services/product.service";
 import { OrderService } from "../services/order.service";
 import { UserService } from "../services/user.service";
+import { User } from "../../models/user/user.interface";
 
 export class ViewController {
   constructor(
@@ -74,8 +75,20 @@ export class ViewController {
 
   renderOrderList = async (req: Request, res: Response) => {
     try {
-      const orders = await this.orderService.getAllOrders();
-      res.render('orders/list', { orders, title: 'Lista de Órdenes', user: res.locals.user });
+      const user = res.locals.user as User;
+      if (!user) {
+        res.status(401).render('error', { message: 'Usuario no autenticado' });
+        return;
+      }
+
+      let orders;
+      if (user.isAdmin) {
+        orders = await this.orderService.getAllOrders();
+      } else {
+        orders = await this.orderService.getOrdersByUserId(user.id);
+      }
+
+      res.render('orders/list', { orders, title: 'Lista de Órdenes', user: user, isAdmin: user.isAdmin });
     } catch (error) {
       console.error('Error al renderizar la lista de órdenes:', error);
       res.status(500).render('error', { message: 'Error interno del servidor' });

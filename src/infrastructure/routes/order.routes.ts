@@ -4,13 +4,20 @@ import { OrderService } from "../../application/services/order.service";
 import { OrderJsonRepository } from "../persistence/order.json.repository";
 import { ProductJsonRepository } from "../persistence/product.json.repository";
 import { ProductService } from "../../application/services/product.service";
+import { UserJsonRepository } from "../persistence/user.json.repository";
+import { UserService } from "../../application/services/user.service";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 const orderRoutes = express.Router();
 const orderRepository = new OrderJsonRepository();
 const orderService = new OrderService(orderRepository);
 const productRepository = new ProductJsonRepository();
 const productService = new ProductService(productRepository);
-const orderController = new OrderController(orderService, productService);
+const userRepository = new UserJsonRepository();
+const userService = new UserService(userRepository);
+const orderController = new OrderController(orderService, productService, userService);
+
+orderRoutes.use(authMiddleware);
 
 orderRoutes.get("/", orderController.getAllOrders.bind(orderController));
 orderRoutes.get("/:id", orderController.getOrderById.bind(orderController));
