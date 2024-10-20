@@ -6,7 +6,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction):
   const token = req.cookies.token;
   console.log('Token recibido:', token);
 
-  const publicRoutes = ['/', '/login', '/register', '/api/user/login', '/api/user/register'];
+  const publicRoutes = ['/', '/login', '/register', '/reset-password', '/api/user/login', '/api/user/register'];
 
   if (token) {
     try {
