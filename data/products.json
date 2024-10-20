@@ -4,8 +4,7 @@
     "name": "Smartphone X",
     "description": "prueba edición de producto",
     "price": "699.3",
-    "category": "Electronics",
-    "_method": "PUT"
+    "category": "Electronics"
   },
   {
     "id": "3",

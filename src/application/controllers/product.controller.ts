@@ -3,7 +3,7 @@ import { ProductService } from "../services/product.service";
 
 export class ProductController {
   constructor(private productService: ProductService) {}
-
+  
   async getAllProducts(req: Request, res: Response) {
     try {
       const products = await this.productService.getAllProducts();

@@ -32,11 +32,36 @@ export class ViewController {
 
   renderProductList = async (req: Request, res: Response) => {
     try {
-      const products = await this.productService.getAllProducts();
-      res.render('products/list', { title: 'Listado de Productos', products, user: res.locals.user });
+      const categoryQuery = req.query.category as string[] | string | undefined;
+      let selectedCategories: string[] = [];
+
+      if (Array.isArray(categoryQuery)) {
+        selectedCategories = categoryQuery.includes('all') ? [] : categoryQuery;
+      } else if (typeof categoryQuery === 'string') {
+        selectedCategories = categoryQuery === 'all' ? [] : [categoryQuery];
+      }
+
+      const allCategories = await this.productService.getCategories();
+      const sortBy = req.query.sortBy as string | undefined;
+      const keyword = req.query.keyword as string | undefined;
+
+      const products = await this.productService.getFilteredProducts({ 
+        category: selectedCategories.length > 0 ? selectedCategories : allCategories,
+        sortBy, 
+        keyword 
+      });
+
+      res.render('products/list', {
+        products,
+        categories: allCategories,
+        currentCategory: selectedCategories,
+        currentSort: sortBy,
+        currentKeyword: keyword,
+        user: res.locals.user
+      });
     } catch (error) {
-      console.error("Error fetching products:", error);
-      res.status(500).render('error', { message: "Error al obtener los productos" });
+      console.error('Error rendering product list:', error);
+      res.status(500).render('error', { message: 'Error al cargar la lista de productos' });
     }
   }
 

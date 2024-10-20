@@ -248,3 +248,72 @@ select {
     border-radius: 50px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
+
+
+.btn-filter {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  height: 38px; 
+}
+
+#filterForm .input-group .btn-filter {
+  height: 100%;
+}
+
+#filterForm .btn-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#filterForm .form-select,
+#filterForm .form-control,
+#filterForm .btn-filter {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 38px;
+}
+
+#categoryDropdown {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  color: #212529;
+  height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  text-align: left;
+  width: 100%;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+#categoryDropdown:focus,
+#categoryDropdown:active,
+#categoryDropdown:hover {
+  box-shadow: none !important;
+  border-color: #ced4da !important;
+  outline: none !important;
+}
+
+#categoryDropdown:hover {
+  background-color: #fff !important;
+}
+
+#categoryDropdown::after {
+    float: right;
+    margin-top: 0.5em;
+}
+
+.dropdown {
+  width: 100%;
+}
+
+#resetFilters {
+  height: 38px;
+  line-height: 1.5;
+  padding: 0.375rem 0.75rem;
+}

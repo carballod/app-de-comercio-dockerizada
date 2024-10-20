@@ -4,6 +4,35 @@ block content
   h2.text-center.mb-4 Nuestros Productos
   
   .container
+    form#filterForm.mb-4(method="GET" action="/products")
+      .row.g-2
+        .col-md-3
+          .dropdown
+            button#categoryDropdown.btn.dropdown-toggle.w-100(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+              | Categorías
+            ul.dropdown-menu.w-100(aria-labelledby="categoryDropdown" style="padding: 10px;")
+              li
+                .form-check
+                  input#allCategories.form-check-input(type="checkbox" value="all" name="category[]" checked=!currentCategory || currentCategory.length === 0)
+                  label.form-check-label(for="allCategories") Todas las categorías
+              each category in categories
+                li
+                  .form-check
+                    input.form-check-input.category-checkbox(type="checkbox" value=category name="category[]" id=category checked=currentCategory && currentCategory.includes(category))
+                    label.form-check-label(for=category)= category
+        .col-md-3
+          select.form-select(name="sortBy")
+            option(value="") Sin ordenar
+            option(value="price_asc", selected=currentSort === 'price_asc') Precio: Menor a Mayor
+            option(value="price_desc", selected=currentSort === 'price_desc') Precio: Mayor a Menor
+        .col-md-3
+          .input-group
+            input.form-control(type="text" name="keyword" placeholder="Buscar..." value=currentKeyword)
+            button.btn.btn-outline-secondary.btn-filter(type="submit") Buscar
+        .col-md-3
+          .d-flex.gap-2
+            button.btn.btn-primary.flex-grow-1.btn-filter(type="submit") Aplicar filtros
+            button#resetFilters.btn.btn-secondary.flex-grow-1(type="button") Resetear filtros
     .row.row-cols-1.row-cols-md-3.g-4
       each product in products
         .col
@@ -11,6 +40,7 @@ block content
             .card-body
               h5.card-title= product.name
               p.card-text.text-muted $#{product.price}
+              p.card-text.text-muted Categoría: #{product.category}
               a.btn.btn-primary.btn-sm(href=`/products/${product.id}`) Ver detalles
               if user && user.isAdmin
                 a.btn.btn-warning.btn-sm.ms-2(href=`/products/${product.id}/edit`) Editar
@@ -131,4 +161,67 @@ block content
       new bootstrap.Modal(document.getElementById('cartModal'));
       updateCartItemCount();
       updateCartModal();
+    });
+
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      this.submit(); 
+    });
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const allCheckbox = document.getElementById('allCategories');
+      const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+      const categoryDropdown = document.getElementById('categoryDropdown');
+      const resetButton = document.getElementById('resetFilters');
+      const sortBySelect = document.querySelector('select[name="sortBy"]');
+      const keywordInput = document.querySelector('input[name="keyword"]');
+
+      allCheckbox.addEventListener('change', function() {
+        categoryCheckboxes.forEach(checkbox => {
+          checkbox.checked = allCheckbox.checked;
+        });
+        updateDropdownText();
+      });
+
+      categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          if (!this.checked) {
+            allCheckbox.checked = false;
+          } else {
+            allCheckbox.checked = Array.from(categoryCheckboxes).every(cb => cb.checked);
+          }
+          updateDropdownText();
+        });
+      });
+
+      function updateDropdownText() {
+        const selectedCategories = Array.from(categoryCheckboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.nextElementSibling.textContent);
+        
+        if (allCheckbox.checked || selectedCategories.length === categoryCheckboxes.length) {
+          categoryDropdown.textContent = 'Todas las categorías';
+        } else if (selectedCategories.length > 0) {
+          categoryDropdown.textContent = `${selectedCategories.length} categorías seleccionadas`;
+        } else {
+          categoryDropdown.textContent = 'Categorías';
+        }
+      }
+
+      resetButton.addEventListener('click', function() {
+        allCheckbox.checked = true;
+        categoryCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        updateDropdownText();
+
+        sortBySelect.value = '';
+
+        keywordInput.value = '';
+
+        document.getElementById('filterForm').submit();
+      });
+
+      updateDropdownText();
     });

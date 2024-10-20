@@ -62,5 +62,34 @@
     "totalAmount": 359.96,
     "status": "cancelled",
     "date": "2024-10-19T18:28:48.323Z"
+  },
+  {
+    "id": "1729374744894",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "productId": "4",
+        "quantity": 2,
+        "price": 79.99
+      },
+      {
+        "productId": "7",
+        "quantity": 2,
+        "price": 24.99
+      },
+      {
+        "productId": "9",
+        "quantity": 2,
+        "price": 39.99
+      },
+      {
+        "productId": "8",
+        "quantity": 2,
+        "price": 199.99
+      }
+    ],
+    "totalAmount": 689.9200000000001,
+    "status": "cancelled",
+    "date": "2024-10-19T21:52:24.893Z"
   }
 ]
