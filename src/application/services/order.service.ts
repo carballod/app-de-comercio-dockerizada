@@ -1,4 +1,4 @@
-import { OrderJsonRepository } from "../../infrastructure/persistence/order.json.repository";
+import { OrderJsonRepository } from "../../models/persistence/order.json.repository";
 import { Order } from "../../models/order/order.interface";
 
 export class OrderService {

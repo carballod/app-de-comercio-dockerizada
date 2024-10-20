@@ -1,4 +1,4 @@
-import { UserJsonRepository } from "../../infrastructure/persistence/user.json.repository";
+import { UserJsonRepository } from "../../models/persistence/user.json.repository";
 import { User } from "../../models/user/user.interface";
 
 export class UserService {

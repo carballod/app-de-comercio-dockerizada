@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { IProductRepository } from "../../application/repository/product.repository";
-import { Product } from "../../models/product/product.interface";
+import { Product } from "../product/product.interface";
 const productsFile = path.join(__dirname, "../../../data/products.json");
 
 export class ProductJsonRepository implements IProductRepository {

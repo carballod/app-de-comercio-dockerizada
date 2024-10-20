@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { IOrderRepository } from "../../application/repository/order.repository";
-import { Order } from "../../models/order/order.interface";
+import { Order } from "../order/order.interface";
 
 const ordersFile = path.join(__dirname, "../../../data/orders.json");
 

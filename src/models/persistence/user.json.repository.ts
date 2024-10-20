@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { IUserRepository } from "../../application/repository/user.repository";
-import { User } from "../../models/user/user.interface";
+import { User } from "../user/user.interface";
 
 const usersFile = path.join(__dirname, "../../../data/users.json");
 
