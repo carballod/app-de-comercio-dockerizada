@@ -68,5 +68,12 @@
     "price": 1,
     "category": "none",
     "id": "1728952188481"
+  },
+  {
+    "name": "producto prueba",
+    "description": "test",
+    "price": "1",
+    "category": "Electronics",
+    "id": "1729431735520"
   }
 ]

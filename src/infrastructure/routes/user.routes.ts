@@ -3,7 +3,6 @@ import { UserController } from "../../application/controllers/user.controller";
 import { UserService } from "../../application/services/user.service";
 import { AuthService } from "../../application/services/auth.service";
 import { UserJsonRepository } from "../persistence/user.json.repository";
-import { authMiddleware } from "../middlewares/auth.middleware";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 
 const userRoutes = express.Router();

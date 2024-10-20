@@ -160,7 +160,7 @@ export class ViewController {
         return res.status(404).render('error', { message: 'Orden no encontrada' });
       }
       res.render('orders/edit', { 
-        ...orderDetails,
+        order: orderDetails,
         title: 'Editar Orden'
       });
     } catch (error) {

@@ -8,12 +8,12 @@ block content
     .mb-3
       label.form-label(for="status") Estado:
       select#status.form-select(name="status")
-        each status in ['pending', 'completed', 'cancelled']
+        each status in ['pending', 'in progress', 'completed', 'cancelled']
           option(value=status selected=order.status === status)= status.charAt(0).toUpperCase() + status.slice(1)
     
     .mb-3
       label.form-label Usuario:
-      input.form-control(type="text" value=userName readonly)
+      input.form-control(type="text" value=order.userName readonly)
     
     h3.mt-4 Productos:
     each product in order.products
