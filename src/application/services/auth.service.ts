@@ -32,12 +32,24 @@ export class AuthService {
     return await this.userRepository.save(newUser);
   }
 
-  async resetPassword(username: string, newPassword: string): Promise<boolean> {
+  async resetPassword(username: string, email: string, verificationCode: string, newPassword: string): Promise<boolean> {
     const user = await this.userRepository.findByUsername(username);
-    if (!user) return false;
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    if (user.email !== email) {
+      throw new Error('El email no coincide con el usuario');
+    }
+
+    if (verificationCode !== '123') {
+      throw new Error('Código de verificación incorrecto');
+    }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.userRepository.update(user.id, { password: hashedPassword });
+    user.password = hashedPassword;
+
+    await this.userRepository.update(user.id, user);
     return true;
   }
 

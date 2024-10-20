@@ -60,5 +60,71 @@
     "totalAmount": 789.29,
     "status": "in progress",
     "date": "2024-10-20T13:59:53.639Z"
+  },
+  {
+    "id": "1729435650306",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "productId": "1",
+        "quantity": 1,
+        "price": 699.3
+      },
+      {
+        "productId": "3",
+        "quantity": 1,
+        "price": 89.99
+      },
+      {
+        "productId": "4",
+        "quantity": 1,
+        "price": 79.99
+      }
+    ],
+    "totalAmount": 869.28,
+    "status": "completed",
+    "date": "2024-10-20T14:47:30.305Z"
+  },
+  {
+    "id": "1729455286381",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "quantity": 1,
+        "price": 699.3
+      },
+      {
+        "quantity": 2,
+        "price": 89.99
+      },
+      {
+        "quantity": 1,
+        "price": 79.99
+      }
+    ],
+    "totalAmount": 959.27,
+    "status": "pending",
+    "date": "2024-10-20T20:14:46.380Z"
+  },
+  {
+    "id": "1729455305855",
+    "userId": "1729353242531",
+    "products": [
+      {
+        "quantity": 1,
+        "price": 699.3
+      },
+      {
+        "quantity": 2,
+        "price": 89.99
+      },
+      {
+        "quantity": 1,
+        "price": 79.99
+      }
+    ],
+    "totalAmount": 959.27,
+    "status": "pending",
+    "date": "2024-10-20T20:15:05.854Z"
   }
 ]

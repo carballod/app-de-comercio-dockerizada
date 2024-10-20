@@ -6,7 +6,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction):
   let token = req.cookies.token;
   console.log('Token recibido:', token);
 
-  const publicRoutes = ['/', '/login', '/register', '/reset-password', '/api/user/login', '/api/user/register'];
+  const publicRoutes = ['/', '/login', '/register', '/reset-password', '/api/user/login', '/api/user/register', '/api/user/reset-password'];
 
   if (!token && req.headers.authorization) {
     const parts = req.headers.authorization.split(' ');

@@ -38,15 +38,8 @@ export class OrderController {
 
       const ordersWithDetails = await this.orderDetailService.getMultipleOrdersDetails(orders, user.isAdmin);
 
-      if (req.accepts('html')) {
-        res.render('orders/list', { 
-          orders: ordersWithDetails, 
-          isAdmin: user.isAdmin,
-          user: user
-        });
-      } else {
-        res.json(ordersWithDetails);
-      }
+      res.json(ordersWithDetails);
+      
     } catch (error) {
       this.handleError(res, error, "fetching orders");
     }

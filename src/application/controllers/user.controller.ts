@@ -39,15 +39,19 @@ export class UserController {
 
   resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { username, newPassword } = req.body;
-      const success = await this.authService.resetPassword(username, newPassword);
+      const { username, email, verificationCode, newPassword } = req.body;
+      const success = await this.authService.resetPassword(username, email, verificationCode, newPassword);
       if (success) {
         res.json({ success: true, message: 'Contraseña restablecida exitosamente' });
       } else {
-        res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        res.status(400).json({ success: false, message: 'No se pudo restablecer la contraseña' });
       }
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        res.status(400).json({ success: false, message: error.message });
+      } else {
+        next(error);
+      }
     }
   }
 
