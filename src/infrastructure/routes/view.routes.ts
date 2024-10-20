@@ -2,12 +2,12 @@ import express from "express";
 import { ViewController } from "../../application/controllers/view.controller";
 import { ProductService } from "../../application/services/product.service";
 import { OrderService } from "../../application/services/order.service";
-import { ProductJsonRepository } from "../../models/persistence/product.json.repository";
-import { OrderJsonRepository } from "../../models/persistence/order.json.repository";
+import { ProductJsonRepository } from "../../../data/persistence/product.json.repository";
+import { OrderJsonRepository } from "../../../data/persistence/order.json.repository";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 import { UserService } from "../../application/services/user.service";
-import { UserJsonRepository } from "../../models/persistence/user.json.repository";
+import { UserJsonRepository } from "../../../data/persistence/user.json.repository";
 import { OrderDetailService } from "../../application/services/order-detail.service";
 
 const viewRoutes = express.Router();
