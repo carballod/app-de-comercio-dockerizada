@@ -14,7 +14,7 @@ export class UserController {
       const token = await this.authService.login(username, password);
       if (token) {
         res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-        res.json({ success: true, message: 'Login exitoso' });
+        res.json({ token: token, success: true, message: 'Login exitoso' });
       } else {
         res.status(401).json({ success: false, message: 'Credenciales inválidas' });
       }

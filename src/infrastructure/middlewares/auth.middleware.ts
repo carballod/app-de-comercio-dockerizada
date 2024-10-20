@@ -3,11 +3,17 @@ import jwt from 'jsonwebtoken';
 import { User } from '../../models/user/user.interface';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const token = req.cookies.token;
+  let token = req.cookies.token;
   console.log('Token recibido:', token);
 
   const publicRoutes = ['/', '/login', '/register', '/reset-password', '/api/user/login', '/api/user/register'];
 
+  if (!token && req.headers.authorization) {
+    const parts = req.headers.authorization.split(' ');
+    if (parts.length === 2 && parts[0] === 'Bearer') {
+      token = parts[1];
+    }
+  }
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as User;
