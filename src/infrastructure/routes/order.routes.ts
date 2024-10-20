@@ -1,10 +1,10 @@
 import express from "express";
 import { OrderController } from "../../application/controllers/order.controller";
 import { OrderService } from "../../application/services/order.service";
-import { OrderJsonRepository } from "../../../data/persistence/order.json.repository";
-import { ProductJsonRepository } from "../../../data/persistence/product.json.repository";
+import { OrderJsonRepository } from "../../models/persistence/order.json.repository";
+import { ProductJsonRepository } from "../../models/persistence/product.json.repository";
 import { ProductService } from "../../application/services/product.service";
-import { UserJsonRepository } from "../../../data/persistence/user.json.repository";
+import { UserJsonRepository } from "../../models/persistence/user.json.repository";
 import { UserService } from "../../application/services/user.service";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { OrderDetailService } from "../../application/services/order-detail.service";
