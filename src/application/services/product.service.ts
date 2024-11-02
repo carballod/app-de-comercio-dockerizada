@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import { IProductRepository } from "../repository/product.repository";
 import { Product } from "../../models/product/product.interface";
 

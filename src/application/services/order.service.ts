@@ -1,8 +1,9 @@
-import { OrderJsonRepository } from "../../models/persistence/order.json.repository";
+import { OrderJsonRepository } from "../../infrastructure/persistence/order.json.repository";
 import { Order } from "../../models/order/order.interface";
+import { IOrderRepository } from "../repository/order.repository";
 
 export class OrderService {
-  constructor(private orderRepository: OrderJsonRepository) {}
+  constructor(private orderRepository: IOrderRepository) {}
 
   async getAllOrders(): Promise<Order[]> {
     return this.orderRepository.findAll();

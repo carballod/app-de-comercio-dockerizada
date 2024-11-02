@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { IOrderRepository } from "../../application/repository/order.repository";
-import { Order } from "../order/order.interface";
+import { Order } from "../../models/order/order.interface";
 
 const ordersFile = path.join(__dirname, "../../../data/orders.json");
 
@@ -45,14 +45,17 @@ export class OrderJsonRepository implements IOrderRepository {
     const index = orders.findIndex((order) => order.id === id);
     if (index === -1) return null;
 
-    if (typeof orderData.totalAmount === 'string') {
+    if (typeof orderData.totalAmount === "string") {
       orderData.totalAmount = parseFloat(orderData.totalAmount);
     }
 
     if (orderData.products) {
-      orderData.products = orderData.products.map(product => ({
+      orderData.products = orderData.products.map((product) => ({
         ...product,
-        price: typeof product.price === 'string' ? parseFloat(product.price) : product.price
+        price:
+          typeof product.price === "string"
+            ? parseFloat(product.price)
+            : product.price,
       }));
     }
 

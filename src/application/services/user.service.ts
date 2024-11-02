@@ -1,8 +1,8 @@
-import { UserJsonRepository } from "../../models/persistence/user.json.repository";
 import { User } from "../../models/user/user.interface";
+import { IUserRepository } from "../repository/user.repository";
 
 export class UserService {
-  constructor(private userRepository: UserJsonRepository) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async getAllUsers(): Promise<User[]> {
     return this.userRepository.findAll();
@@ -26,7 +26,7 @@ export class UserService {
     id: string,
     userData: Partial<Omit<User, "id">>
   ): Promise<User | null> {
-    return this.userRepository.update(id, userData);
+    return this.userRepository.update(id, userData as Omit<User, "id">);
   }
 
   async deleteUser(id: string): Promise<boolean> {

@@ -1,5 +1,5 @@
-import { UserJsonRepository } from "../models/persistence/user.json.repository";
 import bcrypt from "bcrypt";
+import { UserJsonRepository } from "../infrastructure/persistence/user.json.repository";
 
 async function hashExistingPasswords() {
   const userRepository = new UserJsonRepository();

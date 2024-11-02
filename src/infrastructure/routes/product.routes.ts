@@ -2,8 +2,8 @@ import { ProductController } from "../../application/controllers/product.control
 import { ProductService } from "../../application/services/product.service";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { ProductJsonRepository } from "../../models/persistence/product.json.repository";
 import express from "express";
+import { ProductJsonRepository } from "../persistence/product.json.repository";
 
 const productRoutes = express.Router();
 const productRepository = new ProductJsonRepository();

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { UserJsonRepository } from '../../models/persistence/user.json.repository';
 import { User } from '../../models/user/user.interface';
+import { UserJsonRepository } from '../../infrastructure/persistence/user.json.repository';
 
 export class AuthService {
   constructor(private userRepository: UserJsonRepository) {}
