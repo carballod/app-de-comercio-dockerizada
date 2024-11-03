@@ -1,6 +1,5 @@
 import { IProductRepository } from "../repository/product.repository";
-import { Product } from "../../models/product/product.interface";
-
+import { Product } from "../../interfaces/product.interface";
 
 export class ProductService {
   constructor(private productRepository: IProductRepository) {}
@@ -31,7 +30,7 @@ export class ProductService {
   async getFilteredProducts({
     category = [],
     sortBy,
-    keyword
+    keyword,
   }: {
     category?: string[];
     sortBy?: string;
@@ -39,22 +38,27 @@ export class ProductService {
   }): Promise<Product[]> {
     let filteredProducts = await this.productRepository.findAll();
 
-    if (category.length > 0 && category.length !== (await this.getCategories()).length) {
-      filteredProducts = filteredProducts.filter(product => category.includes(product.category));
+    if (
+      category.length > 0 &&
+      category.length !== (await this.getCategories()).length
+    ) {
+      filteredProducts = filteredProducts.filter((product) =>
+        category.includes(product.category)
+      );
     }
 
     if (keyword) {
-      const regex = new RegExp(keyword, 'i');
-      filteredProducts = filteredProducts.filter(product => 
-        regex.test(product.name) || regex.test(product.description)
+      const regex = new RegExp(keyword, "i");
+      filteredProducts = filteredProducts.filter(
+        (product) => regex.test(product.name) || regex.test(product.description)
       );
     }
 
     if (sortBy) {
       filteredProducts.sort((a, b) => {
-        if (sortBy === 'price_asc') {
+        if (sortBy === "price_asc") {
           return a.price - b.price;
-        } else if (sortBy === 'price_desc') {
+        } else if (sortBy === "price_desc") {
           return b.price - a.price;
         }
         return 0;
@@ -66,7 +70,7 @@ export class ProductService {
 
   async getCategories(): Promise<string[]> {
     const products = await this.productRepository.findAll();
-    const categories = new Set(products.map(product => product.category));
+    const categories = new Set(products.map((product) => product.category));
     return Array.from(categories);
   }
 }

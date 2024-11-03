@@ -3,10 +3,10 @@ import { UserController } from "../../application/controllers/user.controller";
 import { UserService } from "../../application/services/user.service";
 import { AuthService } from "../../application/services/auth.service";
 import { adminMiddleware } from "../middlewares/admin.middleware";
-import { UserJsonRepository } from "../persistence/user.json.repository";
+import { UserMongoRepository } from "../persistence/user.mongo.repository";
 
 const userRoutes = express.Router();
-const userRepository = new UserJsonRepository();
+const userRepository = new UserMongoRepository();
 const userService = new UserService(userRepository);
 const authService = new AuthService(userRepository);
 const userController = new UserController(userService, authService);

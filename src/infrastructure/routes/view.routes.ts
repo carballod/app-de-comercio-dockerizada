@@ -6,49 +6,87 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 import { UserService } from "../../application/services/user.service";
 import { OrderDetailService } from "../../application/services/order-detail.service";
-import { UserJsonRepository } from "../persistence/user.json.repository";
-import { ProductJsonRepository } from "../persistence/product.json.repository";
-import { OrderJsonRepository } from "../persistence/order.json.repository";
+import { UserMongoRepository } from "../persistence/user.mongo.repository";
+import { ProductMongoRepository } from "../persistence/product.mongo.repository";
+import { OrderMongoRepository } from "../persistence/order.mongo.repository";
 
 const viewRoutes = express.Router();
-const userRepository = new UserJsonRepository();
-const productRepository = new ProductJsonRepository();
-const orderRepository = new OrderJsonRepository();
+const userRepository = new UserMongoRepository();
+const productRepository = new ProductMongoRepository();
+const orderRepository = new OrderMongoRepository();
 const productService = new ProductService(productRepository);
 const orderService = new OrderService(orderRepository);
 const userService = new UserService(userRepository);
-const orderDetailService = new OrderDetailService(orderService, userService, productService);
-const viewController = new ViewController(productService, orderService, userService, orderDetailService);
+const orderDetailService = new OrderDetailService(
+  orderService,
+  userService,
+  productService
+);
+const viewController = new ViewController(
+  productService,
+  orderService,
+  userService,
+  orderDetailService
+);
 viewRoutes.use(authMiddleware);
 
 viewRoutes.get("/", (req, res) => {
-    console.log(res.locals.user);
+  console.log(res.locals.user);
   if (res.locals.user) {
     viewController.renderWelcome(req, res);
   } else {
-    res.redirect('/login');
+    res.redirect("/login");
   }
 });
 
 viewRoutes.get("/login", (req, res) => {
   if (res.locals.user) {
-    res.redirect('/');
+    res.redirect("/");
   } else {
     viewController.renderLogin(req, res);
   }
 });
 
 viewRoutes.get("/register", viewController.renderRegister.bind(viewController));
-viewRoutes.get("/reset-password", viewController.renderResetPassword.bind(viewController));
+viewRoutes.get(
+  "/reset-password",
+  viewController.renderResetPassword.bind(viewController)
+);
 
-viewRoutes.get("/products", viewController.renderProductList.bind(viewController));
-viewRoutes.get("/products/new", adminMiddleware, viewController.renderProductForm.bind(viewController));
-viewRoutes.get("/products/:id/edit", adminMiddleware, viewController.renderEditProductForm.bind(viewController));
-viewRoutes.get("/products/:id", viewController.renderProductDetails.bind(viewController));
+viewRoutes.get(
+  "/products",
+  viewController.renderProductList.bind(viewController)
+);
+viewRoutes.get(
+  "/products/new",
+  adminMiddleware,
+  viewController.renderProductForm.bind(viewController)
+);
+viewRoutes.get(
+  "/products/:id/edit",
+  adminMiddleware,
+  viewController.renderEditProductForm.bind(viewController)
+);
+viewRoutes.get(
+  "/products/:id",
+  viewController.renderProductDetails.bind(viewController)
+);
 viewRoutes.get("/orders", viewController.renderOrderList);
-viewRoutes.get("/orders/:id/edit", adminMiddleware, viewController.renderEditOrder.bind(viewController));
+viewRoutes.get(
+  "/orders/:id/edit",
+  adminMiddleware,
+  viewController.renderEditOrder.bind(viewController)
+);
 
-viewRoutes.get("/users", adminMiddleware, viewController.renderUserList.bind(viewController));
-viewRoutes.get("/users/:id/edit", adminMiddleware, viewController.renderEditUser.bind(viewController));
+viewRoutes.get(
+  "/users",
+  adminMiddleware,
+  viewController.renderUserList.bind(viewController)
+);
+viewRoutes.get(
+  "/users/:id/edit",
+  adminMiddleware,
+  viewController.renderEditUser.bind(viewController)
+);
 
 export default viewRoutes;

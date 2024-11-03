@@ -1,5 +1,4 @@
-import { OrderJsonRepository } from "../../infrastructure/persistence/order.json.repository";
-import { Order } from "../../models/order/order.interface";
+import { Order } from "../../interfaces/order.interface";
 import { IOrderRepository } from "../repository/order.repository";
 
 export class OrderService {
