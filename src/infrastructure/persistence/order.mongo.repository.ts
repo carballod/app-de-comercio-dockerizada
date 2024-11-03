@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { IOrderRepository } from "../../application/repository/order.repository";
-import { Order } from "../../models/mongoose/schemas.mongoose";
-import { Order as OrderInterface } from "../../models/order/order.interface";
+import { Order as OrderInterface } from "../../interfaces/order.interface";
+import { Order } from "../schemas/order/order.schema";
 
 export class OrderMongoRepository implements IOrderRepository {
   private documentToInterface(doc: any): OrderInterface {

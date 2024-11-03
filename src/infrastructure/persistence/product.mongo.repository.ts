@@ -1,7 +1,7 @@
 import { IProductRepository } from "../../application/repository/product.repository";
-import { Product } from "../../models/mongoose/schemas.mongoose";
-import { Product as ProductInterface } from "../../models/product/product.interface";
+import { Product as ProductInterface } from "../../interfaces/product.interface";
 import { Types } from "mongoose";
+import { Product } from "../schemas/product/product.schema";
 
 export class ProductMongoRepository implements IProductRepository {
   private documentToInterface(doc: any): ProductInterface {

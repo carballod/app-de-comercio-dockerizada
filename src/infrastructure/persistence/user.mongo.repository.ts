@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
-import { User as UserInterface } from "../../models/user/user.interface";
+import { User as UserInterface } from "../../interfaces/user.interface";
 import { IUserRepository } from "../../application/repository/user.repository";
-import { User } from "../../models/mongoose/schemas.mongoose";
+import { User } from "../schemas/user/user.schema";
 
 export class UserMongoRepository implements IUserRepository {
   private documentToInterface(doc: any): UserInterface {
