@@ -30,7 +30,7 @@ export class OrderDetailService {
     const productsWithDetails = await Promise.all(
       order.products.map(async (product) => {
         const productDetails = await this.productService.getProductById(
-          product.productId
+          product.productId.toString()
         );
         return {
           ...product,
@@ -38,7 +38,7 @@ export class OrderDetailService {
           description: productDetails
             ? productDetails.description
             : "Descripción no disponible",
-          price: typeof product.price === "number" ? product.price : undefined,
+          price: product.price,
         };
       })
     );
@@ -46,13 +46,8 @@ export class OrderDetailService {
     return {
       ...order,
       products: productsWithDetails,
-      userName:
-        isAdmin && user
-          ? `${user.username} (${user.id})`
-          : user
-          ? user.username
-          : "Usuario desconocido",
-      date: order.date || new Date().toISOString(),
+      userName: user ? user.username : "Usuario desconocido",
+      date: order.date,
     };
   }
 }

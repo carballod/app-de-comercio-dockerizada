@@ -41,7 +41,19 @@ export class OrderMongoRepository implements IOrderRepository {
     const orders = await Order.find({ userId })
       .populate("products.productId")
       .lean();
-    return orders.map((order) => this.documentToInterface(order));
+
+    return orders.map((order) => ({
+      id: order._id.toString(),
+      userId: order.userId.toString(),
+      products: order.products.map((product) => ({
+        productId: product.productId._id.toString(),
+        quantity: product.quantity,
+        price: product.price,
+      })),
+      totalAmount: order.totalAmount,
+      status: order.status,
+      date: order.date,
+    }));
   }
 
   async save(order: Omit<OrderInterface, "id">): Promise<OrderInterface> {
