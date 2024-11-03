@@ -6,6 +6,7 @@ A Node.js e-commerce application built with Express and TypeScript.
 
 - Node.js (v14+)
 - npm (v6+)
+- MongoDB
 
 ## Installation
 
@@ -25,11 +26,15 @@ A Node.js e-commerce application built with Express and TypeScript.
    ```
    PORT=3000
    JWT_SECRET=your_jwt_secret
+   NODE_ENV=development
+   MONGODB_URI=mongodb:database
    ```
 
 ## Running the Application
 
+### Production Mode
 1. Build the TypeScript files:
+
    ```
    npm run build
    ```
@@ -39,15 +44,29 @@ A Node.js e-commerce application built with Express and TypeScript.
    npm start
    ```
 
+### Development Mode
+
+Run the application with hot-reload enabled:
+
+```
+npm run dev
+```
+
 The application will be available at `http://localhost:3000`.
 
 ## Default Credentials
 
-Admin:
-admin / hashedPassword123
+### Admin Account
 
-User:
-usuario / prueba
+- Username: `admin`
+- Password: `hashedPassword123`
 
-API DOCS:
-https://documenter.getpostman.com/view/13303225/2sAXxY2TPU
+### User Account
+
+- Username: `usuario`
+- Password: `prueba`
+
+## API Documentation
+
+For detailed API documentation, visit:
+[Postman Documentation](https://documenter.getpostman.com/view/13303225/2sAXxY2TPU)
