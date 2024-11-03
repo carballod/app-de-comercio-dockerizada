@@ -1,85 +1,111 @@
-import fs from "fs/promises";
-import path from "path";
+import { Types } from "mongoose";
 import { IOrderRepository } from "../../application/repository/order.repository";
-import { Order } from "../../models/order/order.interface";
+import { Order } from "../../models/mongoose/schemas.mongoose";
+import { Order as OrderInterface } from "../../models/order/order.interface";
 
-const ordersFile = path.join(__dirname, "../../../data/orders.json");
-
-export class OrderJsonRepository implements IOrderRepository {
-  private async readOrders(): Promise<Order[]> {
-    const data = await fs.readFile(ordersFile, "utf-8");
-    return JSON.parse(data);
+export class OrderMongoRepository implements IOrderRepository {
+  private documentToInterface(doc: any): OrderInterface {
+    return {
+      id: doc._id.toString(),
+      userId: doc.userId.toString(),
+      products: doc.products.map((product: any) => ({
+        productId: product.productId.toString(),
+        quantity: product.quantity,
+        price: product.price,
+      })),
+      totalAmount: doc.totalAmount,
+      status: doc.status,
+      date: doc.date,
+    };
   }
 
-  private async writeOrders(orders: Order[]): Promise<void> {
-    await fs.writeFile(ordersFile, JSON.stringify(orders, null, 2));
+  async findAll(): Promise<OrderInterface[]> {
+    const orders = await Order.find()
+      .populate("userId")
+      .populate("products.productId")
+      .lean();
+    return orders.map((order) => this.documentToInterface(order));
   }
 
-  async findAll(): Promise<Order[]> {
-    return this.readOrders();
+  async findById(id: string): Promise<OrderInterface | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+    const order = await Order.findById(id)
+      .populate("userId")
+      .populate("products.productId")
+      .lean();
+    return order ? this.documentToInterface(order) : null;
   }
 
-  async findById(id: string): Promise<Order | null> {
-    const orders = await this.readOrders();
-    return orders.find((order) => order.id === id) || null;
+  async findByUserId(userId: string): Promise<OrderInterface[]> {
+    if (!Types.ObjectId.isValid(userId)) return [];
+    const orders = await Order.find({ userId })
+      .populate("products.productId")
+      .lean();
+    return orders.map((order) => this.documentToInterface(order));
   }
 
-  async findByUserId(userId: string): Promise<Order[]> {
-    const orders = await this.readOrders();
-    return orders.filter((order) => order.userId === userId);
-  }
+  async save(order: Omit<OrderInterface, "id">): Promise<OrderInterface> {
+    const newOrder = new Order({
+      ...order,
+      userId: new Types.ObjectId(order.userId),
+      products: order.products.map((product) => ({
+        ...product,
+        productId: new Types.ObjectId(product.productId),
+      })),
+    });
 
-  async save(order: Omit<Order, "id">): Promise<Order> {
-    const orders = await this.readOrders();
-    const newOrder = { ...order, id: Date.now().toString() };
-    orders.push(newOrder);
-    await this.writeOrders(orders);
-    return newOrder;
+    const savedOrder = await newOrder.save();
+    await (await savedOrder.populate("userId")).populate("products.productId");
+
+    return this.documentToInterface(savedOrder);
   }
 
   async update(
     id: string,
-    orderData: Partial<Omit<Order, "id">>
-  ): Promise<Order | null> {
-    const orders = await this.readOrders();
-    const index = orders.findIndex((order) => order.id === id);
-    if (index === -1) return null;
+    orderData: Partial<Omit<OrderInterface, "id">>
+  ): Promise<OrderInterface | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
 
-    if (typeof orderData.totalAmount === "string") {
-      orderData.totalAmount = parseFloat(orderData.totalAmount);
+    const updateData: any = { ...orderData };
+    if (updateData.userId) {
+      updateData.userId = new Types.ObjectId(updateData.userId);
     }
-
-    if (orderData.products) {
-      orderData.products = orderData.products.map((product) => ({
+    if (updateData.products) {
+      updateData.products = updateData.products.map((product: any) => ({
         ...product,
-        price:
-          typeof product.price === "string"
-            ? parseFloat(product.price)
-            : product.price,
+        productId: new Types.ObjectId(product.productId),
       }));
     }
 
-    orders[index] = { ...orders[index], ...orderData };
-    await this.writeOrders(orders);
-    return orders[index];
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    )
+      .populate("userId")
+      .populate("products.productId")
+      .lean();
+
+    return updatedOrder ? this.documentToInterface(updatedOrder) : null;
   }
 
   async deleteById(id: string): Promise<boolean> {
-    const orders = await this.readOrders();
-    const filteredOrders = orders.filter((order) => order.id !== id);
-    if (filteredOrders.length === orders.length) return false;
-
-    await this.writeOrders(filteredOrders);
-    return true;
+    if (!Types.ObjectId.isValid(id)) return false;
+    const result = await Order.deleteOne({ _id: id });
+    return result.deletedCount > 0;
   }
 
-  async cancelOrder(id: string): Promise<Order | null> {
-    const orders = await this.readOrders();
-    const orderIndex = orders.findIndex((order) => order.id === id);
-    if (orderIndex === -1) return null;
+  async cancelOrder(id: string): Promise<OrderInterface | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { $set: { status: "cancelled" } },
+      { new: true }
+    )
+      .populate("userId")
+      .populate("products.productId")
+      .lean();
 
-    orders[orderIndex].status = "cancelled";
-    await this.writeOrders(orders);
-    return orders[orderIndex];
+    return updatedOrder ? this.documentToInterface(updatedOrder) : null;
   }
 }
