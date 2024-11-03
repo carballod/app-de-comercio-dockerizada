@@ -8,7 +8,7 @@ import { OrderDetailService } from "../../application/services/order-detail.serv
 import { UserMongoRepository } from "../persistence/user.mongo.repository";
 import { ProductService } from "../../application/services/product.service";
 import { ProductMongoRepository } from "../persistence/product.mongo.repository";
-import { OrderMongoRepository } from "../persistence/order.json.repository";
+import { OrderMongoRepository } from "../persistence/order.mongo.repository";
 
 const orderRoutes = express.Router();
 const orderRepository = new OrderMongoRepository();
