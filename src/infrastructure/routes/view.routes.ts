@@ -7,12 +7,12 @@ import { adminMiddleware } from "../middlewares/admin.middleware";
 import { UserService } from "../../application/services/user.service";
 import { OrderDetailService } from "../../application/services/order-detail.service";
 import { UserMongoRepository } from "../persistence/user.mongo.repository";
-import { ProductJsonRepository } from "../persistence/product.json.repository";
+import { ProductMongoRepository } from "../persistence/product.mongo.repository";
 import { OrderJsonRepository } from "../persistence/order.json.repository";
 
 const viewRoutes = express.Router();
 const userRepository = new UserMongoRepository();
-const productRepository = new ProductJsonRepository();
+const productRepository = new ProductMongoRepository();
 const orderRepository = new OrderJsonRepository();
 const productService = new ProductService(productRepository);
 const orderService = new OrderService(orderRepository);
