@@ -1,4 +1,4 @@
-import { Product } from "../../models/product/product.interface";
+import { Product } from "../../interfaces/product.interface";
 
 export interface IProductRepository {
   findAll(): Promise<Product[]>;

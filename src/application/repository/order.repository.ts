@@ -1,4 +1,4 @@
-import { Order } from "../../models/order/order.interface";
+import { Order } from "../../interfaces/order.interface";
 
 export interface IOrderRepository {
   findAll(): Promise<Order[]>;

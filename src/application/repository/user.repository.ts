@@ -1,4 +1,4 @@
-import { User } from "../../models/user/user.interface";
+import { User } from "../../interfaces/user.interface";
 
 export interface IUserRepository {
   findAll(): Promise<User[]>;

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User } from "../../models/user/user.interface";
+import { User } from "../../interfaces/user.interface";
 import { UserMongoRepository } from "../../infrastructure/persistence/user.mongo.repository";
 
 export class AuthService {
