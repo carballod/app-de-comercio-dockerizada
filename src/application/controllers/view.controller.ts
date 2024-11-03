@@ -54,6 +54,7 @@ export class ViewController {
       res.render("products/list", {
         products,
         categories: allCategories,
+        title: "Productos",
         currentCategory: selectedCategories,
         currentSort: sortBy,
         currentKeyword: keyword,
@@ -199,7 +200,7 @@ export class ViewController {
         title: "Editar Orden",
       });
     } catch (error) {
-      this.handleError(res, error);
+      this.handleError(res, error as Error);
     }
   }
 
@@ -257,7 +258,7 @@ export class ViewController {
     }
   }
 
-  handleError(res: Response, error: any) {
+  handleError(res: Response, error: Error) {
     console.error(error);
     res.status(500).render("error", {
       message: error.message || "Ha ocurrido un error",
