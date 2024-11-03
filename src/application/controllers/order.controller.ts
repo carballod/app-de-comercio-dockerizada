@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { OrderService } from "../services/order.service";
-import { ProductService } from "../services/product.service";
 import { User } from "../../models/user/user.interface";
 import { Order } from "../../models/order/order.interface";
-import { UserService } from "../services/user.service";
 import { OrderDetailService } from "../services/order-detail.service";
 
 export class OrderController {
