@@ -134,41 +134,11 @@ export class ViewController {
         orders = await this.orderService.getOrdersByUserId(user.id);
       }
 
-      const ordersWithDetails = await Promise.all(
-        orders.map(async (order) => {
-          const productsWithDetails = await Promise.all(
-            order.products.map(async (product) => {
-              const productDetails = await this.productService.getProductById(
-                product.productId
-              );
-              return {
-                ...product,
-                name: productDetails
-                  ? productDetails.name
-                  : "Producto no encontrado",
-                description: productDetails
-                  ? productDetails.description
-                  : "Descripción no disponible",
-                price:
-                  typeof product.price === "number" ? product.price : undefined,
-              };
-            })
-          );
-
-          let orderUser;
-          if (user.isAdmin) {
-            orderUser = await this.userService.getUserById(order.userId);
-          }
-
-          return {
-            ...order,
-            products: productsWithDetails,
-            userName: orderUser
-              ? `${orderUser.username} (${orderUser.id})`
-              : "Usuario desconocido",
-          };
-        })
-      );
+      const ordersWithDetails =
+        await this.orderDetailService.getMultipleOrdersDetails(
+          orders,
+          user.isAdmin
+        );
 
       res.render("orders/list", {
         orders: ordersWithDetails,

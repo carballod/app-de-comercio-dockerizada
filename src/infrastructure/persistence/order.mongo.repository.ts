@@ -7,9 +7,9 @@ export class OrderMongoRepository implements IOrderRepository {
   private documentToInterface(doc: any): OrderInterface {
     return {
       id: doc._id.toString(),
-      userId: doc.userId.toString(),
+      userId: doc.userId._id.toString(),
       products: doc.products.map((product: any) => ({
-        productId: product.productId.toString(),
+        productId: product.productId._id.toString(),
         quantity: product.quantity,
         price: product.price,
       })),
@@ -42,18 +42,7 @@ export class OrderMongoRepository implements IOrderRepository {
       .populate("products.productId")
       .lean();
 
-    return orders.map((order) => ({
-      id: order._id.toString(),
-      userId: order.userId.toString(),
-      products: order.products.map((product) => ({
-        productId: product.productId._id.toString(),
-        quantity: product.quantity,
-        price: product.price,
-      })),
-      totalAmount: order.totalAmount,
-      status: order.status,
-      date: order.date,
-    }));
+    return orders.map((order) => this.documentToInterface(order));
   }
 
   async save(order: Omit<OrderInterface, "id">): Promise<OrderInterface> {

@@ -12,9 +12,7 @@ export class OrderDetailService {
 
   async getOrderDetails(orderId: string) {
     const order = await this.orderService.getOrderById(orderId);
-    if (!order) {
-      return null;
-    }
+    if (!order) return null;
 
     return this.enrichOrderWithDetails(order);
   }
