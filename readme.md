@@ -54,17 +54,25 @@ npm run dev
 
 The application will be available at `http://localhost:3000`.
 
+## Database Seeding
+
+Load sample data into the database:
+
+```bash
+npm run seed
+```
+
 ## Default Credentials
 
 ### Admin Account
 
 - Username: `admin`
-- Password: `hashedPassword123`
+- Password: `1234`
 
 ### User Account
 
 - Username: `usuario`
-- Password: `prueba`
+- Password: `usuario`
 
 ## API Documentation
 

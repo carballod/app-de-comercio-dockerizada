@@ -77,7 +77,7 @@ export const products = [
 export const users = [
   {
     username: "admin",
-    email: "admin@admintechstore.com",
+    email: "admin@example.com",
     password: "1234",
     isAdmin: true,
   },
