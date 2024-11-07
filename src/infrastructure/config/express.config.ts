@@ -5,6 +5,7 @@ import logger from "morgan";
 import userRoutes from "../routes/user.routes";
 import productRoutes from "../routes/product.routes";
 import orderRoutes from "../routes/order.routes";
+import categoryRoutes from "../routes/category.route";
 import viewRoutes from "../routes/view.routes";
 import { authMiddleware } from "../middlewares/auth.middleware"; 
 
@@ -31,6 +32,7 @@ export function configureExpress(): express.Application {
   app.use("/api/user", userRoutes);
   app.use("/api/product", productRoutes);
   app.use("/api/order", orderRoutes);  
+  app.use("/api/category", categoryRoutes);  
 
   return app;
 }

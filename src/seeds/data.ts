@@ -112,3 +112,47 @@ export const users = [
     isAdmin: false,
   },
 ];
+
+
+export const categories = [
+  {
+    name: "Laptops",
+    description: "Computadoras portátiles de todas las marcas",
+    active: true
+  },
+  {
+    name: "Smartphones",
+    description: "Teléfonos inteligentes y accesorios",
+    active: true
+  },
+  {
+    name: "Tablets",
+    description: "Tablets y accesorios relacionados",
+    active: true
+  },
+  {
+    name: "Accesorios",
+    description: "Accesorios diversos para dispositivos electrónicos",
+    active: true
+  },
+  {
+    name: "Monitores",
+    description: "Pantallas y monitores de computadora",
+    active: true
+  },
+  {
+    name: "Periféricos",
+    description: "Dispositivos periféricos para computadoras",
+    active: true
+  },
+  {
+    name: "Almacenamiento",
+    description: "Dispositivos de almacenamiento digital",
+    active: true
+  },
+  {
+    name: "Redes",
+    description: "Equipamiento de redes y conectividad",
+    active: true
+  }
+];

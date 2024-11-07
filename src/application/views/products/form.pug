@@ -15,8 +15,9 @@ block content
       label(for='price') Precio
       input#price.form-control(type='number', name='price', step='0.01', value=product ? product.price : '', required)
     .form-group
-      label(for='category') Categoría
-      input#category.form-control(type='text', name='category', value=product ? product.category : '', required)
+       select#category.form-control(name='category', required)
+        each category in categories
+          option(value=category.name, selected=product && product.category === category.name)= category.name
     button.btn.btn-primary(type='submit') Guardar
 
   script.

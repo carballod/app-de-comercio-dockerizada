@@ -1,0 +1,143 @@
+extends ../../layout
+
+block content
+  h1.mb-4 Gestión de Categorías
+  
+  .d-flex.justify-content-end.mb-3
+    button.btn.btn-primary(data-bs-toggle='modal' data-bs-target='#categoryModal') Nueva Categoría
+
+  table.table
+    thead
+      tr
+        th Nombre
+        th Descripción
+        th Estado
+        th Acciones
+    tbody
+      each category in categories
+        tr
+          td= category.name
+          td= category.description
+          td
+            span(class=`badge bg-${category.active ? 'success' : 'danger'}`)
+              = category.active ? 'Activo' : 'Inactivo'
+          td
+            button.btn.btn-warning.btn-sm.me-2.edit-category(data-category-id=category.id) Editar
+            button.btn.btn-danger.btn-sm.delete-category(data-category-id=category.id) Eliminar
+
+  #categoryModal.modal.fade(tabindex='-1')
+    .modal-dialog
+      .modal-content
+        form#categoryForm
+          .modal-header
+            h5#categoryModalLabel.modal-title Nueva Categoría
+            button.btn-close(data-bs-dismiss='modal')
+          .modal-body
+            input#categoryId(type='hidden')
+            .mb-3
+              label.form-label(for='name') Nombre
+              input#name.form-control(type='text', required)
+            .mb-3
+              label.form-label(for='description') Descripción
+              textarea#description.form-control(required)
+            .mb-3
+              .form-check
+                input#active.form-check-input(type='checkbox', checked)
+                label.form-check-label(for='active') Activo
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+            button.btn.btn-primary(type='submit') Guardar
+          
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+      const categoryForm = document.getElementById('categoryForm');
+      const categoryId = document.getElementById('categoryId');
+      
+      function resetForm() {
+        categoryForm.reset();
+        categoryId.value = '';
+        document.getElementById('categoryModalLabel').textContent = 'Nueva Categoría';
+      }
+
+      document.querySelector('[data-bs-target="#categoryModal"]').addEventListener('click', resetForm);
+
+      document.querySelectorAll('.edit-category').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = button.dataset.categoryId;
+          try {
+            const response = await fetch(`/api/category/${id}`);
+            const category = await response.json();
+            
+            categoryId.value = category.id;
+            document.getElementById('name').value = category.name;
+            document.getElementById('description').value = category.description;
+            document.getElementById('active').checked = category.active;
+            document.getElementById('categoryModalLabel').textContent = 'Editar Categoría';
+            
+            categoryModal.show();
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error al cargar la categoría');
+          }
+        });
+      });
+
+      categoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+          name: document.getElementById('name').value,
+          description: document.getElementById('description').value,
+          active: document.getElementById('active').checked
+        };
+
+        const id = categoryId.value;
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `/api/category/${id}` : '/api/category';
+
+        try {
+          const response = await fetch(url, {
+            method,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            categoryModal.hide();
+            window.location.reload();
+          } else {
+            const error = await response.json();
+            alert(`Error: ${error.message}`);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error al guardar la categoría');
+        }
+      });
+
+      document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', async () => {
+          if (confirm('¿Está seguro de eliminar esta categoría?')) {
+            const id = button.dataset.categoryId;
+            try {
+              const response = await fetch(`/api/category/${id}`, {
+                method: 'DELETE'
+              });
+
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                const error = await response.json();
+                alert(`Error: ${error.message}`);
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Error al eliminar la categoría');
+            }
+          }
+        });
+      });
+    });

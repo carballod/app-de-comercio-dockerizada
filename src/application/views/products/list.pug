@@ -1,9 +1,15 @@
 extends ../layout
 
 block content
-  h2.text-center.mb-4 Nuestros Productos
+  h1.mb-4 Nuestros Productos
   
   .container
+    .d-flex.justify-content-end.mb-3
+      if user && user.isAdmin
+        .d-flex.align-items-center.gap-2
+          a.btn.btn-primary(href="/products/new" style="width: 180px; white-space: nowrap;") Agregar Producto
+          a.btn.btn-secondary(href='/products/categories' style="width: 180px; white-space: nowrap;") Gestionar Categorías
+
     form#filterForm.mb-4(method="GET" action="/products")
       .row.g-2
         .col-md-3
@@ -47,10 +53,7 @@ block content
                 button.btn.btn-danger.btn-sm.ms-2.delete-product-btn(data-product-id=product.id) Eliminar
               else if user
                 button.btn.btn-success.btn-sm.ms-2.add-to-cart-btn(data-product-id=product.id, data-product-name=product.name, data-product-price=product.price) Agregar al carrito
-    
-    if user && user.isAdmin
-      .mt-4.text-center
-        a.btn.btn-success(href="/products/new") Agregar nuevo producto
+
 
   #cartModal.modal.fade(tabindex='-1', aria-labelledby='cartModalLabel', aria-hidden='true')
     .modal-dialog

@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
-import { products, users } from "./data";
+import { categories, products, users } from "./data";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { Product } from "../infrastructure/schemas/product/product.schema";
 import { User } from "../infrastructure/schemas/user/user.schema";
 import { Order } from "../infrastructure/schemas/order/order.schema";
 import { seedOrders } from "./seedOrders";
+import { Category } from "../infrastructure/schemas/category/category.schema";
 
 dotenv.config();
 
@@ -25,11 +26,15 @@ async function seed() {
       Product.deleteMany({}),
       User.deleteMany({}),
       Order.deleteMany({}),
+      Category.deleteMany({})
     ]);
     console.log("Base de datos limpiada");
 
     const createdProducts = await Product.insertMany(products);
     console.log(`${createdProducts.length} productos creados`);
+
+    const createdCategories = await Category.insertMany(categories);
+    console.log(`${createdCategories.length} categorías creados`);
 
     const hashedUsers = await Promise.all(
       users.map(async (user) => ({

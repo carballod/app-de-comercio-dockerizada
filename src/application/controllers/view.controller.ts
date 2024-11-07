@@ -4,13 +4,15 @@ import { OrderService } from "../services/order.service";
 import { UserService } from "../services/user.service";
 import { User } from "../../interfaces/user.interface";
 import { OrderDetailService } from "../services/order-detail.service";
+import { CategoryService } from "../services/category.service";
 
 export class ViewController {
   constructor(
     private productService: ProductService,
     private orderService: OrderService,
     private userService: UserService,
-    private orderDetailService: OrderDetailService
+    private orderDetailService: OrderDetailService,
+    private categoryService: CategoryService
   ) {}
 
   renderLogin = (req: Request, res: Response) => {
@@ -88,37 +90,23 @@ export class ViewController {
     }
   }
 
-  renderProductForm(req: Request, res: Response, next: NextFunction) {
+  async renderProductForm(req: Request, res: Response) {
     try {
+      const categories = await this.categoryService.getAllCategories();
+      const product = req.params.id
+        ? await this.productService.getProductById(req.params.id)
+        : null;
+      
       res.render("products/form", {
-        title: "Agregar Producto",
-        user: res.locals.user,
+        title: product ? "Editar Producto" : "Nuevo Producto",
+        product,
+        categories: categories.filter(cat => cat.active) 
       });
     } catch (error) {
-      next(error);
+      res.status(500).send("Error al cargar el formulario");
     }
   }
-
-  async renderEditProduct(req: Request, res: Response) {
-    try {
-      const product = await this.productService.getProductById(req.params.id);
-      if (product) {
-        res.render("products/edit", {
-          title: "Editar Producto",
-          product,
-          user: res.locals.user,
-        });
-      } else {
-        res.status(404).render("error", { message: "Producto no encontrado" });
-      }
-    } catch (error) {
-      console.error("Error fetching product for edit:", error);
-      res.status(500).render("error", {
-        message: "Error al obtener el producto para editar",
-      });
-    }
-  }
-
+  
   renderOrderList = async (req: Request, res: Response) => {
     try {
       const user = res.locals.user as User;
@@ -210,21 +198,12 @@ export class ViewController {
     }
   }
 
-  async renderEditProductForm(req: Request, res: Response, next: NextFunction) {
+  async renderCategoryList(req: Request, res: Response): Promise<void> {
     try {
-      const productId = req.params.id;
-      const product = await this.productService.getProductById(productId);
-      if (product) {
-        res.render("products/form", {
-          title: "Editar Producto",
-          product,
-          user: res.locals.user,
-        });
-      } else {
-        res.status(404).render("error", { message: "Producto no encontrado" });
-      }
+      const categories = await this.categoryService.getAllCategories();
+      res.render("products/categories/list", { categories });
     } catch (error) {
-      next(error);
+      res.status(500).json({ message: "Error al obtener categorías" });
     }
   }
 
