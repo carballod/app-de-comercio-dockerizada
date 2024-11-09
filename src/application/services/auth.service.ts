@@ -17,21 +17,33 @@ export class AuthService {
   }
 
   async register(userData: Partial<User>): Promise<User> {
-    if (!userData.username || !userData.password || !userData.email) {
-      throw new Error("Username, password, and email are required");
+    const validationErrors = [];
+    if (!userData.username) validationErrors.push("El nombre de usuario es requerido");
+    if (!userData.password) validationErrors.push("La contraseña es requerida");
+    if (!userData.email) validationErrors.push("El email es requerido");
+  
+    if (validationErrors.length > 0) {
+      throw new Error(validationErrors.join(", "));
     }
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const newUser: Omit<User, "id"> = {
-      username: userData.username,
-      email: userData.email,
-      password: hashedPassword,
-      isAdmin: false,
-    };
-
-    return await this.userRepository.save(newUser);
-  }
-
+    const { username, email, password } = userData as Required<Pick<User, 'username' | 'email' | 'password'>>;
+  
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser: Omit<User, "id"> = {
+        username,
+        email,
+        password: hashedPassword,
+        isAdmin: false,
+      };
+  
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error al crear usuario: ${error.message}`);
+      }
+      throw new Error('Error al crear usuario en la base de datos');
+    }
+}
   async resetPassword(
     username: string,
     email: string,

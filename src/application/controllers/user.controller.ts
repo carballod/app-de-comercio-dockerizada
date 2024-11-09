@@ -25,15 +25,64 @@ export class UserController {
 
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const existingUser = await this.userService.getUserByUsername(req.body.username);
-      if (existingUser) {
-        res.status(400).json({ success: false, message: 'El usuario ya existe' });
+      if (!req.body || typeof req.body !== 'object') {
+        res.status(400).json({
+          success: false,
+          message: 'Datos de registro inválidos'
+        });
         return;
       }
-      const newUser = await this.authService.register(req.body);
-      res.status(201).json({ success: true, message: 'Usuario registrado exitosamente' });
+  
+      console.log('Iniciando registro con datos:', {
+        username: req.body.username,
+        email: req.body.email
+      });
+  
+      try {
+        const existingUser = await this.userService.getUserByUsername(req.body.username);
+        if (existingUser) {
+          res.status(400).json({
+            success: false,
+            message: 'El usuario ya existe'
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error al verificar usuario existente:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Error al verificar disponibilidad del usuario'
+        });
+        return;
+      }
+  
+      try {
+        const newUser = await this.authService.register(req.body);
+        res.status(201).json({
+          success: true,
+          message: 'Usuario registrado exitosamente'
+        });
+      } catch (error) {
+        console.error('Error en el proceso de registro:', error);
+        
+        if (error instanceof Error && error.message.includes('requerido')) {
+          res.status(400).json({
+            success: false,
+            message: error.message
+          });
+        } else {
+          res.status(500).json({
+            success: false,
+            message: 'Error al crear el usuario. Por favor, intente nuevamente.'
+          });
+        }
+      }
     } catch (error) {
-      next(error);
+      console.error('Error general en registro:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
     }
   }
 

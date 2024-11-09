@@ -1,0 +1,186 @@
+extends ../layout
+
+block content
+  h1.mb-4 Gestión de #{entityName}
+  
+  .d-flex.justify-content-end.mb-3
+    button.btn.btn-primary(data-bs-toggle='modal' data-bs-target='#managementModal') Agregar #{entityNameSingular}
+
+  table.table
+    thead
+      tr
+        each header in headers
+          th= header
+        th Acciones
+    tbody
+      each item in items
+        tr
+          each field in fields
+            td
+              if booleanFields && booleanFields[field]
+               != item[field] ? booleanFields[field].trueLabel : booleanFields[field].falseLabel
+              else
+               = item[field]
+          td
+            button.btn.btn-warning.btn-sm.me-2.edit-item(data-item-id=item.id) Editar
+            button.btn.btn-danger.btn-sm.delete-item(data-item-id=item.id) Eliminar
+
+  #managementModal.modal.fade(tabindex='-1')
+    .modal-dialog
+      .modal-content
+        form#managementForm
+          .modal-header
+            h5#managementModalLabel.modal-title Agregar #{entityNameSingular}
+            button.btn-close(data-bs-dismiss='modal')
+          .modal-body
+            input#itemId(type='hidden')
+            each field in formFields
+              .mb-3
+                label.form-label(for=field.name)= field.label
+                if field.type === 'select'
+                  select(id=field.name name=field.name class='form-control')
+                    each option in field.options
+                      option(value=option.value)= option.label
+                else if field.type === 'checkbox'
+                  .form-check
+                    input(
+                      id=field.name
+                      name=field.name
+                      type='checkbox'
+                      class='form-check-input'
+                      checked = true
+                    )
+                else
+                  input(
+                    id=field.name
+                    name=field.name
+                    type=field.type
+                    class='form-control'
+                    required=field.required
+                  )
+            if createOnlyFields
+              #createOnlyFields
+                each field in createOnlyFields
+                  .mb-3
+                    label.form-label(for=field.name)= field.label
+                    input(
+                      id=field.name
+                      name=field.name
+                      type=field.type
+                      class='form-control'
+                      required=field.required
+                    )
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+            button.btn.btn-primary(type='submit') Guardar
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
+      const managementForm = document.getElementById('managementForm');
+      const itemId = document.getElementById('itemId');
+      const fields = !{JSON.stringify(fields)};
+      const createOnlyFieldsDiv = document.getElementById('createOnlyFields');
+      
+      function resetForm() {
+        managementForm.reset();
+        itemId.value = '';
+        document.getElementById('managementModalLabel').textContent = 'Agregar !{entityNameSingular}';
+        if (createOnlyFieldsDiv) {
+          createOnlyFieldsDiv.style.display = 'block';
+        }
+      }
+
+      document.querySelector('[data-bs-target="#managementModal"]').addEventListener('click', resetForm);
+
+      document.querySelectorAll('.edit-item').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = button.dataset.itemId;
+          try {
+            const response = await fetch(`/api/!{apiEndpoint}/${id}`);
+            const item = await response.json();
+            
+            itemId.value = item.id;
+            fields.forEach(field => {
+              const input = document.getElementById(field);
+              if (input) {
+                if (input.type === 'checkbox') {
+                  input.checked = item[field];
+                } else {
+                  input.value = item[field];
+                }
+              }
+            });
+            
+            if (createOnlyFieldsDiv) {
+              createOnlyFieldsDiv.style.display = 'none';
+            }
+            
+            document.getElementById('managementModalLabel').textContent = 'Editar !{entityNameSingular}';
+            managementModal.show();
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error al cargar el elemento');
+          }
+        });
+      });
+
+      managementForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const id = itemId.value;
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `/api/!{apiEndpoint}/${id}` : `/api/!{apiEndpoint}`;
+
+        const formDataObj = Object.fromEntries(formData);
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          formDataObj[checkbox.name] = checkbox.checked;
+        });
+
+        if (id) {
+          delete formDataObj.password;
+        }
+
+        try {
+          const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formDataObj)
+          });
+
+          if (response.ok) {
+            managementModal.hide();
+            window.location.reload();
+          } else {
+            const error = await response.json();
+            alert(`Error: ${error.message}`);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error al guardar el elemento');
+        }
+      });
+
+      document.querySelectorAll('.delete-item').forEach(button => {
+        button.addEventListener('click', async () => {
+          if (confirm('¿Está seguro de eliminar este elemento?')) {
+            const id = button.dataset.itemId;
+            try {
+              const response = await fetch(`/api/!{apiEndpoint}/${id}`, {
+                method: 'DELETE'
+              });
+
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                const error = await response.json();
+                alert(`Error: ${error.message}`);
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Error al eliminar el elemento');
+            }
+          }
+        });
+      });
+    });

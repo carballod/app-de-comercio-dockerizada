@@ -12,9 +12,8 @@ const authService = new AuthService(userRepository);
 const userController = new UserController(userService, authService);
 
 userRoutes.post("/login", userController.login);
-userRoutes.post("/register", userController.register);
+userRoutes.post("/", userController.register);  
 userRoutes.post("/reset-password", userController.resetPassword);
-
 userRoutes.post("/logout", userController.logout);
 
 userRoutes.use(adminMiddleware);

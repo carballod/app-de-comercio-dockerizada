@@ -16,7 +16,7 @@ export const authMiddleware = (
     "/register",
     "/reset-password",
     "/api/user/login",
-    "/api/user/register",
+    "/api/user",
     "/api/user/reset-password",
   ];
 

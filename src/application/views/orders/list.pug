@@ -6,44 +6,229 @@ block content
   if orders.length === 0
     p No hay órdenes para mostrar.
   else
-    .row
-      each order in orders
-        .col-md-6.mb-4
-          .card
-            .card-body
-              h5.card-title Orden ##{order.id}
-              if isAdmin
-                p.card-text
-                  strong Usuario: 
-                  | #{order.userName}
-              p.card-text
-                strong Estado: 
-                span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
-              p.card-text
-                strong Fecha: 
-                | #{new Date(order.date).toLocaleString()}
-              p.card-text
-                strong Total: 
-                | $#{order.totalAmount.toFixed(2)}
-              h6.mt-3 Productos:
-              ul.list-group.list-group-flush
-                each product in order.products
-                  li.list-group-item
-                    h6= product.name
-                    if product.description
-                      p= product.description
-                    p Cantidad: #{product.quantity} - Precio: $#{product.price.toFixed(2)}
-              
-              if order.status === 'pending'
-                if isAdmin
-                  .mt-3
-                    a.btn.btn-sm.btn-primary.me-2(href=`/orders/${order.id}/edit`) Editar Orden
-                    button.btn.btn-sm.btn-danger(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
-                else
-                  button.btn.btn-sm.btn-danger.mt-3(onclick=`cancelOrder('${order.id}')`) Cancelar Orden
+    .alert.alert-success.mb-3
+      i.bi.bi-info-circle.me-2
+      | Haz click en cualquier orden pendiente para editarla.
 
+    .table-responsive
+      table.table.table-hover
+        thead
+          tr
+            th Orden #
+            th Fecha
+            if isAdmin
+              th Usuario
+            th Total
+            th Estado
+        tbody
+          each order in orders
+            tr(
+              role="button" 
+              data-bs-toggle="modal" 
+              data-bs-target=`#orderModal${order.id}`
+              class=order.status === 'pending' ? 'table-active' : ''
+              style=order.status === 'pending' ? 'cursor: pointer' : ''
+            )
+              td= order.id
+              td= new Date(order.date).toLocaleString()
+              if isAdmin
+                td
+                  if order.userId === 'Usuario eliminado'
+                    span.badge.bg-danger Usuario eliminado
+                  else
+                    | #{order.userName}
+              td $#{order.totalAmount.toFixed(2)}
+              td
+                span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
+
+    each order in orders
+      .modal.fade(id=`orderModal${order.id}` tabindex="-1")
+        .modal-dialog.modal-lg
+          .modal-content
+            .modal-header
+              h5.modal-title Orden ##{order.id}
+              button.btn-close(data-bs-dismiss="modal")
+            .modal-body
+              form(id=`orderForm${order.id}`)
+                .row
+                  .col-md-6
+                    if isAdmin
+                      p
+                        strong Usuario: 
+                        if order.userId === 'Usuario eliminado'
+                          span.badge.bg-danger Usuario eliminado
+                        else
+                          | #{order.userName}
+                    .form-group.mb-3
+                      label.form-label Estado:
+                      if order.status === 'pending' && isAdmin
+                        select.form-select(name="status")
+                          option(value="pending" selected=order.status === 'pending') Pendiente
+                          option(value="in progress" selected=order.status === 'in progress') En Progreso
+                          option(value="completed" selected=order.status === 'completed') Completado
+                          option(value="cancelled" selected=order.status === 'cancelled') Cancelado
+                      else
+                        p
+                          span(class=`badge bg-${order.status === 'completed' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning'}`)= order.status
+                    p
+                      strong Fecha: 
+                      | #{new Date(order.date).toLocaleString()}
+                    .form-group.mb-3
+                      label.form-label Total:
+                      p(id=`total-${order.id}`) $#{order.totalAmount.toFixed(2)}
+                  .col-md-12
+                    h6.mt-3 Productos:
+                    table.table.table-sm
+                      thead
+                        tr
+                          th Producto
+                          th Cantidad
+                          if order.status === 'pending' && isAdmin
+                            th Precio Unitario
+                          else
+                            th Precio
+                          th Subtotal
+                          if order.status === 'pending'
+                            th Acciones
+                      tbody
+                        each product in order.products
+                          tr(data-product-id=product.productId class="product-row")
+                            td
+                              if product.productId === 'Producto eliminado'
+                                span.text-danger Producto eliminado
+                              else
+                                | #{product.name}
+                            if order.status === 'pending' 
+                              td
+                                input.form-control.form-control-sm.product-quantity(
+                                  type="number" 
+                                  value=product.quantity 
+                                  min="1"
+                                  onchange=`updateOrderTotal('${order.id}')`
+                                )
+                            else
+                              td= product.quantity
+                            if order.status === 'pending' && isAdmin
+                              td
+                                input.form-control.form-control-sm.product-price(
+                                  type="number" 
+                                  value=product.price 
+                                  step="0.01"
+                                  min="0"
+                                  data-original-price=product.price
+                                  onchange=`updateOrderTotal('${order.id}')`
+                                )
+                            else
+                              td $#{product.price.toFixed(2)}
+                            td.subtotal $#{(product.quantity * product.price).toFixed(2)}
+                            if order.status === 'pending'
+                              td
+                                button.btn.btn-sm.btn-danger.remove-product(
+                                  type="button"
+                                  onclick=`toggleProductRemoval(this, '${order.id}')`
+                                  title="Eliminar producto"
+                                )
+                                  i.bi.bi-trash.fw-bold
+            .modal-footer
+              if order.status === 'pending'
+                button.btn.btn-success.me-2(type="button" onclick=`saveOrder('${order.id}')`)
+                  i.bi.bi-check2.me-1
+                  | Guardar Cambios
+                  button.btn.btn-danger.me-2(type="button" onclick=`cancelOrder('${order.id}')`)
+                    i.bi.bi-x-circle.me-1
+                    | Cancelar Orden
+              button.btn.btn-secondary(data-bs-dismiss="modal") Cerrar
 
   script.
+    function toggleProductRemoval(button, orderId) {
+      const row = button.closest('tr');
+      row.classList.toggle('table-danger');
+      row.classList.toggle('removed');
+      updateOrderTotal(orderId);
+    }
+
+    function updateOrderTotal(orderId) {
+      const modal = document.querySelector(`#orderModal${orderId}`);
+      let total = 0;
+      
+      modal.querySelectorAll('.product-row').forEach(row => {
+        if (!row.classList.contains('removed')) {
+          const quantity = parseFloat(row.querySelector('.product-quantity').value);
+          const price = row.querySelector('.product-price') ? 
+            parseFloat(row.querySelector('.product-price').value) :
+            parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('$', ''));
+          const subtotal = quantity * price;
+          total += subtotal;
+          
+          // Actualizar el subtotal en la fila
+          row.querySelector('.subtotal').textContent = `$${subtotal.toFixed(2)}`;
+        }
+      });
+      
+      // Actualizar el total
+      const totalElement = document.querySelector(`#total-${orderId}`);
+      totalElement.textContent = `$${total.toFixed(2)}`;
+    }
+
+    async function saveOrder(orderId) {
+      const modal = document.querySelector(`#orderModal${orderId}`);
+      const form = modal.querySelector(`#orderForm${orderId}`);
+      const formData = new FormData(form);
+      
+      // Recolectar datos de productos
+      const products = [];
+      modal.querySelectorAll('.product-row').forEach(row => {
+        if (!row.classList.contains('removed')) {
+          const quantity = parseInt(row.querySelector('.product-quantity').value);
+          // Si no existe el input de precio, tomarlo del texto
+          const priceInput = row.querySelector('.product-price');
+          let price;
+          if (priceInput) {
+            price = parseFloat(priceInput.value);
+          } else {
+            price = parseFloat(row.querySelector('td:nth-child(3)').textContent.replace('$', ''));
+          }
+          
+          products.push({
+            productId: row.dataset.productId,
+            quantity: quantity,
+            price: price
+          });
+        }
+      });
+
+      const orderData = {
+        totalAmount: parseFloat(document.querySelector(`#total-${orderId}`).textContent.replace('$', '')),
+        products
+      };
+
+      // Solo agregar status si existe el select (solo para admin)
+      const statusSelect = form.querySelector('select[name="status"]');
+      if (statusSelect) {
+        orderData.status = statusSelect.value;
+      }
+
+      try {
+        const response = await fetch(`/api/order/${orderId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+          const isAdmin = #{isAdmin}; // Convertir el valor de Pug a JavaScript
+          alert(isAdmin ? 'Orden actualizada correctamente' : 'Cantidades actualizadas correctamente');
+          location.reload();
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.message}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al guardar los cambios');
+      }
+    }
+
     async function cancelOrder(orderId) {
       if (confirm('¿Estás seguro de que quieres cancelar esta orden?')) {
         try {

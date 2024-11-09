@@ -66,7 +66,7 @@ viewRoutes.get(
 viewRoutes.get(
   "/products/categories",
   adminMiddleware,
-  viewController.renderCategoryList.bind(viewController)
+  (req, res) => viewController.renderManagementView(req, res, 'categories')
 )
 viewRoutes.get(
   "/products/new",
@@ -83,21 +83,11 @@ viewRoutes.get(
   viewController.renderProductDetails.bind(viewController)
 );
 viewRoutes.get("/orders", viewController.renderOrderList);
-viewRoutes.get(
-  "/orders/:id/edit",
-  adminMiddleware,
-  viewController.renderEditOrder.bind(viewController)
-);
 
 viewRoutes.get(
   "/users",
   adminMiddleware,
-  viewController.renderUserList.bind(viewController)
-);
-viewRoutes.get(
-  "/users/:id/edit",
-  adminMiddleware,
-  viewController.renderEditUser.bind(viewController)
+  (req, res) => viewController.renderManagementView(req, res, 'users')
 );
 
 export default viewRoutes;

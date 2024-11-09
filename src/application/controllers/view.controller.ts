@@ -5,6 +5,7 @@ import { UserService } from "../services/user.service";
 import { User } from "../../interfaces/user.interface";
 import { OrderDetailService } from "../services/order-detail.service";
 import { CategoryService } from "../services/category.service";
+import { title } from "process";
 
 export class ViewController {
   constructor(
@@ -142,68 +143,68 @@ export class ViewController {
     }
   };
 
-  async renderEditOrder(req: Request, res: Response) {
+
+
+  async renderManagementView(req: Request, res: Response, type: 'users' | 'categories'): Promise<void>  {
     try {
-      const orderId = req.params.id;
-      const orderDetails = await this.orderDetailService.getOrderDetails(
-        orderId
-      );
-      if (!orderDetails) {
-        return res
-          .status(404)
-          .render("error", { message: "Orden no encontrada" });
+      let viewData;
+      
+      if (type === 'users') {
+        const users = await this.userService.getAllUsers();
+        viewData = {
+          entityName: 'Usuarios',
+          title: 'Gestión de Usuarios',
+          entityNameSingular: 'Usuario',
+          apiEndpoint: 'user',
+          headers: ['ID', 'Usuario', 'Email', 'Rol'],
+          fields: ['id', 'username', 'email', 'isAdmin'],
+          items: users,
+          booleanFields: {
+            isAdmin: {
+              trueLabel: '<span class="badge bg-success">Administrador</span>',
+              falseLabel: '<span class="badge bg-warning">Usuario</span>'
+            }
+          },
+          formFields: [
+            { name: 'username', label: 'Usuario', type: 'text', required: true },
+            { name: 'email', label: 'Email', type: 'email', required: true },
+            { name: 'isAdmin', label: 'Es Admin', type: 'select', required: true, 
+              options: [
+                { value: 'true', label: 'Sí' },
+                { value: 'false', label: 'No' }
+              ]
+            }],
+            createOnlyFields: [
+              { name: 'password', label: 'Password', type: 'password', required: true }
+          ]
+        };
+      } else {
+        const categories = await this.categoryService.getAllCategories();
+        viewData = {
+          entityName: 'Categorías',
+          title: 'Gestión de Categorías',
+          entityNameSingular: 'Categoría',
+          apiEndpoint: 'category',
+          headers: ['Nombre', 'Descripción', 'Estado'],
+          fields: ['name', 'description', 'active'],
+          items: categories,
+          booleanFields: {
+            active: {
+              trueLabel: '<span class="badge bg-success">Activo</span>',
+              falseLabel: '<span class="badge bg-danger">Inactivo</span>'
+            }
+          },
+          formFields: [
+            { name: 'name', label: 'Nombre', type: 'text', required: true },
+            { name: 'description', label: 'Descripción', type: 'text', required: true },
+            { name: 'active', label: 'Activo', type: 'checkbox' }
+          ]
+        };
       }
-      res.render("orders/edit", {
-        order: orderDetails,
-        title: "Editar Orden",
-      });
+      
+      res.render('admin/management', viewData);
     } catch (error) {
       this.handleError(res, error as Error);
-    }
-  }
-
-  async renderUserList(req: Request, res: Response) {
-    try {
-      const users = await this.userService.getAllUsers();
-      res.render("users/list", {
-        title: "Listado de Usuarios",
-        users,
-        user: res.locals.user,
-      });
-    } catch (error) {
-      console.error("Error fetching users for view:", error);
-      res
-        .status(500)
-        .render("error", { message: "Error al obtener los usuarios" });
-    }
-  }
-
-  async renderEditUser(req: Request, res: Response) {
-    try {
-      const user = await this.userService.getUserById(req.params.id);
-      if (user) {
-        res.render("users/edit", {
-          title: "Editar Usuario",
-          user,
-          currentUser: res.locals.user,
-        });
-      } else {
-        res.status(404).render("error", { message: "Usuario no encontrado" });
-      }
-    } catch (error) {
-      console.error("Error fetching user for edit:", error);
-      res.status(500).render("error", {
-        message: "Error al obtener el usuario para editar",
-      });
-    }
-  }
-
-  async renderCategoryList(req: Request, res: Response): Promise<void> {
-    try {
-      const categories = await this.categoryService.getAllCategories();
-      res.render("products/categories/list", { categories });
-    } catch (error) {
-      res.status(500).json({ message: "Error al obtener categorías" });
     }
   }
 

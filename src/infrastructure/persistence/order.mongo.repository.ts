@@ -5,24 +5,41 @@ import { Order } from "../schemas/order/order.schema";
 
 export class OrderMongoRepository implements IOrderRepository {
   private documentToInterface(doc: any): OrderInterface {
-    return {
-      id: doc._id.toString(),
-      userId: doc.userId._id.toString(),
-      products: doc.products.map((product: any) => ({
-        productId: product.productId._id.toString(),
-        quantity: product.quantity,
-        price: product.price,
-      })),
-      totalAmount: doc.totalAmount,
-      status: doc.status,
-      date: doc.date,
-    };
+    try {
+      return {
+        id: doc._id.toString(),
+        userId: doc.userId
+          ? doc.userId._id
+            ? doc.userId._id.toString()
+            : doc.userId.toString()
+          : "Usuario eliminado",
+        products: (doc.products || []).map((product: any) => ({
+          productId: product.productId?._id
+            ? product.productId._id.toString()
+            : product.productId?.toString() || "Producto eliminado",
+          quantity: product.quantity,
+          price: product.price,
+        })),
+        totalAmount: doc.totalAmount,
+        status: doc.status,
+        date: doc.date,
+      };
+    } catch (error) {
+      console.error(
+        "Error converting document to interface:",
+        error,
+        "Document:",
+        doc
+      );
+      throw new Error(`Error converting order document: ${error}`);
+    }
   }
 
   async findAll(): Promise<OrderInterface[]> {
     const orders = await Order.find()
       .populate("userId")
       .populate("products.productId")
+      .sort({ date: -1 })
       .lean();
     return orders.map((order) => this.documentToInterface(order));
   }
@@ -40,6 +57,9 @@ export class OrderMongoRepository implements IOrderRepository {
     if (!Types.ObjectId.isValid(userId)) return [];
     const orders = await Order.find({ userId })
       .populate("products.productId")
+      .sort({
+        date: -1,
+      })
       .lean();
 
     return orders.map((order) => this.documentToInterface(order));
