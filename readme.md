@@ -62,6 +62,26 @@ Load sample data into the database:
 npm run seed
 ```
 
+## Testing
+
+Run all tests:
+
+```
+npm test
+```
+
+Run tests in watch mode:
+
+```
+npm run test:watch
+```
+
+Generate coverage report:
+
+```
+npm run test:coverage
+```
+
 ## Default Credentials
 
 ### Admin Account
