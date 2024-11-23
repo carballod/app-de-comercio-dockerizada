@@ -9,6 +9,7 @@ import { UserMongoRepository } from "../persistence/user.mongo.repository";
 import { ProductService } from "../../application/services/product.service";
 import { ProductMongoRepository } from "../persistence/product.mongo.repository";
 import { OrderMongoRepository } from "../persistence/order.mongo.repository";
+import { adminMiddleware } from "../middlewares/admin.middleware";
 
 const orderRoutes = express.Router();
 const orderRepository = new OrderMongoRepository();
@@ -32,11 +33,12 @@ orderRoutes.get(
   orderController.getOrdersByUserId.bind(orderController)
 );
 orderRoutes.post("/", orderController.createOrder.bind(orderController));
-orderRoutes.delete("/:id", orderController.deleteOrder.bind(orderController));
 orderRoutes.post(
   "/:id/cancel",
   orderController.cancelOrder.bind(orderController)
 );
+orderRoutes.use(adminMiddleware)
+orderRoutes.delete("/:id", orderController.deleteOrder.bind(orderController));
 orderRoutes.put("/:id", orderController.updateOrder.bind(orderController));
 
 export default orderRoutes;

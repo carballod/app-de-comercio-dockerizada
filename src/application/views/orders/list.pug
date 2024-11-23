@@ -88,7 +88,7 @@ block content
                           else
                             th Precio
                           th Subtotal
-                          if order.status === 'pending'
+                          if order.status === 'pending' && isAdmin
                             th Acciones
                       tbody
                         each product in order.products
@@ -98,7 +98,7 @@ block content
                                 span.text-danger Producto eliminado
                               else
                                 | #{product.name}
-                            if order.status === 'pending' 
+                            if order.status === 'pending' && isAdmin
                               td
                                 input.form-control.form-control-sm.product-quantity(
                                   type="number" 
@@ -121,7 +121,7 @@ block content
                             else
                               td $#{product.price.toFixed(2)}
                             td.subtotal $#{(product.quantity * product.price).toFixed(2)}
-                            if order.status === 'pending'
+                            if order.status === 'pending' && isAdmin
                               td
                                 button.btn.btn-sm.btn-danger.remove-product(
                                   type="button"
@@ -130,7 +130,7 @@ block content
                                 )
                                   i.bi.bi-trash.fw-bold
             .modal-footer
-              if order.status === 'pending'
+              if order.status === 'pending' && isAdmin
                 button.btn.btn-success.me-2(type="button" onclick=`saveOrder('${order.id}')`)
                   i.bi.bi-check2.me-1
                   | Guardar Cambios
