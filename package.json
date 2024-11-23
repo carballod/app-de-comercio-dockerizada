@@ -11,7 +11,8 @@
     "build": "tsc",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"npm run build && npm start\"",
     "serve": "node dist/app.js",
-    "seed": "ts-node src/seeds/seed.ts"
+    "seed": "ts-node src/seeds/seed.ts",
+    "vercel-build": "tsc"
   },
   "keywords": [],
   "author": "",
