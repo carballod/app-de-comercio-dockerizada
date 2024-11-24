@@ -1,4 +1,3 @@
-// src/__tests__/controllers/user.controller.test.ts
 import request from "supertest";
 import { configureExpress } from "../../infrastructure/config/express.config";
 import { User } from "../../infrastructure/schemas/user/user.schema";
