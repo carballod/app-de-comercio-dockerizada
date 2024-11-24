@@ -130,7 +130,7 @@ block content
                                 )
                                   i.bi.bi-trash.fw-bold
             .modal-footer
-              if order.status === 'pending' && isAdmin
+              if order.status === 'pending' 
                 button.btn.btn-success.me-2(type="button" onclick=`saveOrder('${order.id}')`)
                   i.bi.bi-check2.me-1
                   | Guardar Cambios
