@@ -75,6 +75,45 @@ The application is deployed on Vercel. To deploy your own instance:
    vercel --prod
    ```
 
+## Docker Execution (Practica Formativa Num. 2)
+
+### Docker Prerequisites
+- Docker
+- Docker Compose
+
+### Steps to Run with Docker
+
+1. Clone the repository:
+   ```bash
+   git clone [repository-url]
+   cd [project-directory]
+   ```
+
+2. Start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+3. The application will be available at:
+   http://localhost:3000
+
+4. To stop the containers:
+   ```bash
+   docker-compose down
+   ```
+
+5. To load sample data into the database:
+   ```bash
+   docker exec -it webapp-node npm run seed
+   ```
+
+### Docker Configuration
+The application has been dockerized with the following configuration:
+- Dockerfile: Configures the Node.js environment with TypeScript
+- docker-compose.yml: Orchestrates the Node.js and MongoDB services
+- Ports: The application is exposed on port 3000
+- Database: MongoDB accessible internally at mongodb://mongo:27017/ecommerce
+
 ## Database Seeding
 
 Load sample data into the database:
