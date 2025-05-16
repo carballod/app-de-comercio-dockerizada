@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    container_name: webapp-node
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/ecommerce
+    depends_on:
+      - mongo
+    volumes:
+      - ./:/app:delegated
+      - /app/node_modules
+      - /app/dist
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+    container_name: webapp-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
