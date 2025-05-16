@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: webapp-node
+    container_name: app-de-comercio-node
     ports:
       - "3000:3000"
     environment:
@@ -18,7 +18,7 @@ services:
 
   mongo:
     image: mongo:latest
-    container_name: webapp-mongo
+    container_name: app-de-comercio-mongo
     ports:
       - "27017:27017"
     volumes:
